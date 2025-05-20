@@ -252,6 +252,7 @@
         .btn-help { background: #FECACA; color: #B91C1C; }
         .btn-prev, .btn-next { background: #DBEAFE; color: #2563EB; }
         .btn-hint { background: #FEF9C3; color: #CA8A04; }
+        .btn-speak { background: #93C5FD; color: #1E40AF; }
         .btn-del { background: #FECACA; color: #B91C1C; }
         .action-btn:active, .action-btn:focus, .game-btn:active, .game-btn:focus {
             filter: brightness(0.96);
@@ -1524,17 +1525,13 @@
                 setupEventListeners();
             } else {
                 bar.innerHTML = `
-                    <button class="game-btn btn-prev" id="prevBtn">
-                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
-                      上一个
-                    </button>
-                    <button class="game-btn btn-next" id="nextBtn">
-                      下一个
-                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
-                    </button>
                     <button class="game-btn btn-hint" id="hintBtn">
                       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm0 14v2m0-8v4"/></svg>
                       提示
+                    </button>
+                    <button class="game-btn btn-speak" id="speakBtn">
+                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                      发音
                     </button>
                     <button class="game-btn btn-del" id="delBtn">
                       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -1546,37 +1543,53 @@
                     </button>
                 `;
                 // 绑定游戏操作事件
-                document.getElementById('prevBtn').onclick = prevWord;
-                document.getElementById('nextBtn').onclick = nextWord;
                 document.getElementById('hintBtn').onclick = showHint;
+                document.getElementById('speakBtn').onclick = speakWord;
                 document.getElementById('delBtn').onclick = handleBackspace;
                 document.getElementById('okBtn').onclick = handleEnter;
             }
         }
 
         // 游戏流程相关操作函数
-        function prevWord() {
-            if (!gameState.isPlaying) return;
-            if (gameState.currentWordIndex > 0) {
-                gameState.currentWordIndex--;
-                showNextWord();
-                updateGameInfo();
-            }
-        }
-        function nextWord() {
-            if (!gameState.isPlaying) return;
-            if (gameState.currentWordIndex < gameState.currentWordList.length - 1) {
-                gameState.currentWordIndex++;
-                showNextWord();
-                updateGameInfo();
-            }
-        }
         function showHint() {
             if (!gameState.isPlaying) return;
             const currentWord = gameState.currentWordList[gameState.currentWordIndex];
             const answer = currentWord.answer.toUpperCase();
             showHintTip(`提示：<b>${answer}</b>`);
         }
+        
+        // 添加发音功能
+        function speakWord() {
+            if (!gameState.isPlaying) return;
+            
+            const currentWord = gameState.currentWordList[gameState.currentWordIndex];
+            const text = currentWord.answer;
+            
+            // 检查浏览器是否支持语音合成API
+            if ('speechSynthesis' in window) {
+                // 停止任何正在进行的语音
+                window.speechSynthesis.cancel();
+                
+                // 创建语音对象
+                const utterance = new SpeechSynthesisUtterance(text);
+                
+                // 设置语音参数
+                utterance.lang = 'en-US'; // 设置为英语
+                utterance.rate = 0.9;     // 语速稍慢一点
+                utterance.pitch = 1;      // 音调正常
+                utterance.volume = 1;     // 最大音量
+                
+                // 播放语音
+                window.speechSynthesis.speak(utterance);
+                
+                // 显示一个提示，但不显示单词
+                showHintTip(`🔊 正在播放发音...`);
+            } else {
+                // 浏览器不支持语音合成API
+                showHintTip(`抱歉，您的浏览器不支持语音功能`);
+            }
+        }
+        
         // 在输入框下方显示提示内容
         function showHintTip(msg) {
             let tip = document.getElementById('hintTip');

@@ -348,6 +348,7 @@
         .btn-help { background: #FECACA; color: #B91C1C; }
         .btn-prev, .btn-next { background: #DBEAFE; color: #2563EB; }
         .btn-hint { background: #FEF9C3; color: #CA8A04; }
+        .btn-speak { background: #93C5FD; color: #1E40AF; }
         .btn-del { background: #FECACA; color: #B91C1C; }
 
         .action-btn:active, .action-btn:focus, .game-btn:active, .game-btn:focus {
@@ -889,6 +890,20 @@
                 opacity: 0.7;
             }
         }
+
+        /* 提示框样式 */
+        .hint-tip {
+            margin-top: 1.2rem;
+            font-size: 1.15rem;
+            color: #CA8A04;
+            background: #FEF9C3;
+            border-radius: 1rem;
+            padding: 0.5rem 1.2rem;
+            box-shadow: 0 2px 8px rgba(202,138,4,0.08);
+            display: inline-block;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+        }
     </style>
 </head>
 <body>
@@ -1187,68 +1202,9 @@
             setupEventListeners();
             renderActionBars();
             
-            // 初始化声音效果
-            initSounds();
-            
             // 添加键盘大小自适应
             optimizeKeyboardSize();
             window.addEventListener('resize', optimizeKeyboardSize);
-        }
-        
-        // 初始化声音效果
-        function initSounds() {
-            // 创建简单的音频上下文
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            if (!AudioContext) return; // 浏览器不支持音频API时静默失败
-            
-            gameState.audioContext = new AudioContext();
-            
-            // 定义几种不同的声音
-            gameState.sounds = {
-                keyPress: {
-                    frequency: 800,
-                    duration: 30,
-                    type: 'sine',
-                    volume: 0.1
-                },
-                correct: {
-                    frequency: 1200,
-                    duration: 100,
-                    type: 'sine',
-                    volume: 0.2
-                },
-                wrong: {
-                    frequency: 300,
-                    duration: 100,
-                    type: 'triangle',
-                    volume: 0.2
-                }
-            };
-        }
-        
-        // 播放声音效果
-        function playSound(type) {
-            if (!gameState.audioContext || !gameState.sounds[type]) return;
-            
-            try {
-                const sound = gameState.sounds[type];
-                const oscillator = gameState.audioContext.createOscillator();
-                const gainNode = gameState.audioContext.createGain();
-                
-                oscillator.type = sound.type;
-                oscillator.frequency.value = sound.frequency;
-                gainNode.gain.value = sound.volume;
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(gameState.audioContext.destination);
-                
-                oscillator.start();
-                setTimeout(() => {
-                    oscillator.stop();
-                }, sound.duration);
-            } catch (e) {
-                console.log('Error playing sound:', e);
-            }
         }
 
         // 键盘大小动态优化
@@ -1575,9 +1531,6 @@
                         keyElement.classList.add('active');
                         setTimeout(() => keyElement.classList.remove('active'), 100);
                     }
-                    
-                    // 播放声音
-                    playSound('keyPress');
                 }
             }
         }
@@ -1593,15 +1546,12 @@
                 if (lastInput) {
                     lastInput.textContent = '';
                     
-                    // 添加按键动画和声音
+                    // 添加按键动画
                     const keyElement = document.querySelector(`#${player}Keyboard .keyboard-key.delete`);
                     if (keyElement) {
                         keyElement.classList.add('active');
                         setTimeout(() => keyElement.classList.remove('active'), 100);
                     }
-                    
-                    // 播放声音
-                    playSound('keyPress');
                 }
             }
         }
@@ -1628,9 +1578,6 @@
                 inputs.forEach(input => {
                     input.style.backgroundColor = '#86EFAC';
                 });
-                
-                // 播放正确声音
-                playSound('correct');
             } else {
                 // 显示错误反馈
                 inputs.forEach(input => {
@@ -1641,9 +1588,6 @@
                 for (let i = 0; i < correctAnswer.length; i++) {
                     inputs[i].textContent = correctAnswer[i];
                 }
-                
-                // 播放错误声音
-                playSound('wrong');
             }
 
             // 延迟后进入下一个单词
@@ -1882,17 +1826,13 @@
                 } else {
                     // 游戏进行中
                     bar.innerHTML = `
-                        <button class="game-btn btn-prev" id="${player}PrevBtn">
-                          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
-                          上一个
-                        </button>
-                        <button class="game-btn btn-next" id="${player}NextBtn">
-                          下一个
-                          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
-                        </button>
                         <button class="game-btn btn-hint" id="${player}HintBtn">
                           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm0 14v2m0-8v4"/></svg>
                           提示
+                        </button>
+                        <button class="game-btn btn-speak" id="${player}SpeakBtn">
+                          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+                          发音
                         </button>
                         <button class="game-btn btn-del" id="${player}DelBtn">
                           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -1903,51 +1843,15 @@
                           确认
                         </button>
                     `;
-                    document.getElementById(`${player}PrevBtn`).onclick = () => prevWord(player);
-                    document.getElementById(`${player}NextBtn`).onclick = () => nextWord(player);
                     document.getElementById(`${player}HintBtn`).onclick = () => showHint(player);
+                    document.getElementById(`${player}SpeakBtn`).onclick = () => speakWord(player);
                     document.getElementById(`${player}DelBtn`).onclick = () => handleBackspace(player);
                     document.getElementById(`${player}OkBtn`).onclick = () => handleEnter(player);
                 }
             });
         }
 
-        // 游戏流程相关操作函数 (新增)
-        function prevWord(player) {
-            if (!gameState.isPlaying || !gameState.players[player]) return;
-            const playerState = gameState.players[player];
-            if (playerState.currentWordIndex > 0) {
-                playerState.currentWordIndex--;
-                showNextWord(player);
-                updateGameInfo(player);
-                 // 清除之前的答案状态和提示
-                const inputs = document.querySelectorAll(`#${player}WordDisplay .input-box`);
-                inputs.forEach(input => {
-                    input.style.backgroundColor = ''; // Reset background
-                    input.textContent = ''; // Clear content if needed for re-attempt
-                });
-                const tip = document.getElementById(`${player}HintTip`);
-                if (tip) tip.style.display = 'none';
-            }
-        }
-
-        function nextWord(player) {
-            if (!gameState.isPlaying || !gameState.players[player]) return;
-            const playerState = gameState.players[player];
-            if (playerState.currentWordIndex < gameState.currentWordList.length - 1) {
-                playerState.currentWordIndex++;
-                showNextWord(player);
-                updateGameInfo(player);
-                // 清除之前的答案状态和提示
-                const inputs = document.querySelectorAll(`#${player}WordDisplay .input-box`);
-                inputs.forEach(input => {
-                    input.style.backgroundColor = ''; // Reset background
-                     input.textContent = ''; // Clear content if needed for re-attempt
-                });
-                const tip = document.getElementById(`${player}HintTip`);
-                if (tip) tip.style.display = 'none';
-            }
-        }
+        // 游戏流程相关操作函数
 
         // 显示提示
         function showHint(player) {
@@ -1974,6 +1878,38 @@
             tip._timer = setTimeout(() => {
                 tip.style.display = 'none';
             }, 3000);
+        }
+
+        // 添加发音功能
+        function speakWord(player) {
+            if (!gameState.isPlaying) return;
+            
+            const currentWord = gameState.currentWordList[gameState.players[player].currentWordIndex];
+            const text = currentWord.answer;
+            
+            // 检查浏览器是否支持语音合成API
+            if ('speechSynthesis' in window) {
+                // 停止任何正在进行的语音
+                window.speechSynthesis.cancel();
+                
+                // 创建语音对象
+                const utterance = new SpeechSynthesisUtterance(text);
+                
+                // 设置语音参数
+                utterance.lang = 'en-US'; // 设置为英语
+                utterance.rate = 0.9;     // 语速稍慢一点
+                utterance.pitch = 1;      // 音调正常
+                utterance.volume = 1;     // 最大音量
+                
+                // 播放语音
+                window.speechSynthesis.speak(utterance);
+                
+                // 显示一个提示，但不显示单词
+                showHintTip(player, `🔊 正在播放发音...`);
+            } else {
+                // 浏览器不支持语音合成API
+                showHintTip(player, `抱歉，您的浏览器不支持语音功能`);
+            }
         }
 
         // 词库管理相关函数
