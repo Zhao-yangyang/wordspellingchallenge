@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+    <title>单词拼写挑战 - 双人版</title>
+    <style>
+        /* Tailwind CSS 核心样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #F6F8FB;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden; /* 防止水平滚动 */
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1rem;
+            box-sizing: border-box;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: #fff;
+            padding: 0.75rem 1rem;
+            box-shadow: 0 1px 6px rgba(59, 130, 246, 0.08);
+            border-radius: 0 0 1rem 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin: 0 auto;
+            flex-wrap: wrap; /* 允许在小屏幕上换行 */
+            gap: 0.5rem;
+        }
+
+        /* 双人游戏区域布局 */
+        .game-area {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            flex: 1;
+            flex-wrap: wrap; /* 允许在小屏幕上换成列布局 */
+            align-items: stretch;
+            width: 100%;
+        }
+
+        .player-section {
+            flex: 1;
+            min-width: 0; /* 防止flex项目溢出 */
+            background: #fff;
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #E5E7EB;
+            flex-wrap: wrap; /* 小屏幕适应 */
+            gap: 0.5rem;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .player-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #E0E7FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #2563EB;
+            flex-shrink: 0;
+        }
+
+        .player-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1F2937;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            background: #E0E7FF;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .game-info div {
+            font-size: 1rem;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .game-info span {
+            font-weight: 700;
+            color: #2563EB;
+            font-size: 1.1em;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #f8fafc 60%, #e0e7ff 100%);
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px 0 rgba(59,130,246,0.10);
+            padding: 1.25rem 0.75rem;
+            margin: 0.5rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* 添加垂直居中 */
+            height: 160px; /* 增大卡片高度 */
+            flex: 0 0 160px; /* 固定高度不伸缩 */
+        }
+
+        .card h2 {
+            font-size: 1.8rem; /* 增大标题字号 */
+            font-weight: 800;
+            color: #1e293b;
+            margin: 0 0 0.75rem 0; /* 增加一点底部间距 */
+            letter-spacing: 0.02em;
+            text-align: center;
+            word-break: break-word; /* 防止长单词溢出 */
+        }
+
+        .word-display {
+            display: flex;
+            gap: 0.75rem; /* 增大间距 */
+            margin: 0.75rem 0; /* 适当增加上下边距 */
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+            padding: 0 0.5rem;
+        }
+
+        .input-box {
+            border: 2px dashed #A5B4FC;
+            border-radius: 0.5rem;
+            width: 2.75rem; /* 增大宽度 */
+            height: 2.75rem; /* 增大高度 */
+            font-size: 1.6rem; /* 增大字号 */
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            background: #F3F4F6;
+            color: #2563EB;
+            transition: all 0.2s;
+            margin: 0 0.1rem 0.25rem;
+            user-select: none; /* 防止用户选择文本 */
+        }
+
+        .input-box.correct {
+            background-color: #D1FAE5;
+            border-color: #34D399;
+            color: #059669;
+        }
+
+        .input-box.incorrect {
+            background-color: #FECACA;
+            border-color: #F87171;
+            color: #B91C1C;
+        }
+
+        /* 虚拟键盘相关样式 */
+        .virtual-keyboard {
+            background-color: #fff;
+            padding: 0.75rem 0.5rem 0.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem; /* 减小间距 */
+            max-width: 100%;
+            width: 100%;
+            margin: 0.5rem 0 0;
+            box-sizing: border-box;
+            flex: 1 1 auto; /* 允许键盘区域伸缩并占用剩余空间 */
+            overflow: hidden; /* 防止内容溢出 */
+        }
+
+        .keyboard-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: center; /* 使用center确保按键居中分布 */
+            gap: 0.2rem; /* 减小键盘按键之间的间距 */
+            margin-bottom: 0.2rem;
+            flex-wrap: nowrap; /* 防止按键换行导致布局错乱 */
+            min-height: 2.2rem; /* 略微减小行高 */
+            width: 100%; /* 确保行宽100% */
+        }
+
+        .keyboard-key {
+            flex: 1 0 8%; /* 改为固定百分比，确保所有按键宽度相同 */
+            min-width: 8%; /* 最小宽度防止按键过小 */
+            max-width: 10%; /* 最大宽度防止按键过大 */
+            height: 2.2rem; /* 减小按键高度 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem; /* 减小字体大小 */
+            font-weight: 700;
+            border-radius: 0.5rem;
+            border: none;
+            box-shadow: 0 1px 3px rgba(59, 130, 246, 0.10);
+            cursor: pointer;
+            transition: all 0.15s;
+            background: #FDE68A;
+            color: #B45309;
+            margin: 0;
+            padding: 0;
+        }
+
+        .keyboard-key.delete {
+            flex: 1.5 0 12%; /* 删除键占更多空间 */
+            max-width: 15%; /* 限制最大宽度 */
+            background: #FECACA;
+            color: #B91C1C;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .keyboard-key.enter {
+            flex: 1.5 0 12%; /* 回车键占更多空间 */
+            max-width: 15%; /* 限制最大宽度 */
+            background: #A7F3D0;
+            color: #047857;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .keyboard-key.blank {
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+            cursor: default !important;
+            pointer-events: none !important; /* 禁用点击事件 */
+        }
+
+        /* 彩色字母按钮 */
+        .key-red { background: #FCA5A5; color: #B91C1C; }
+        .key-green { background: #A7F3D0; color: #047857; }
+        .key-blue { background: #BFDBFE; color: #1D4ED8; }
+        .key-yellow { background: #FDE68A; color: #B45309; }
+        .key-pink { background: #F9A8D4; color: #BE185D; }
+        .key-purple { background: #C7D2FE; color: #3730A3; }
+        .key-orange { background: #FDBA74; color: #B45309; }
+        .key-cyan { background: #6EE7B7; color: #065F46; }
+
+        .keyboard-key:active, .keyboard-key:focus {
+            outline: 2px solid #3B82F6;
+            outline-offset: 2px;
+            filter: brightness(0.95);
+        }
+
+        /* 操作按钮区 */
+        .action-bar {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .action-btn, .game-btn {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 1rem;
+            padding: 0.25rem 0.75rem;
+            min-height: 2rem;
+            border: none;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.07);
+            cursor: pointer;
+            transition: all 0.18s cubic-bezier(.4,0,.2,1);
+            outline: none;
+            position: relative;
+            background: #F3F4F6;
+            color: #2563EB;
+            white-space: nowrap;
+        }
+
+        .action-btn svg, .game-btn svg {
+            width: 1em;
+            height: 1em;
+            vertical-align: middle;
+        }
+
+        .btn-start, .btn-ok {
+            background: linear-gradient(90deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #047857;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 0.35rem 1.25rem;
+            min-height: 2.2rem;
+            box-shadow: 0 4px 16px rgba(52, 211, 153, 0.13);
+        }
+
+        .btn-settings { background: #DBEAFE; color: #2563EB; }
+        .btn-wordlist { background: #F9A8D4; color: #BE185D; }
+        .btn-help { background: #FECACA; color: #B91C1C; }
+        .btn-prev, .btn-next { background: #DBEAFE; color: #2563EB; }
+        .btn-hint { background: #FEF9C3; color: #CA8A04; }
+        .btn-del { background: #FECACA; color: #B91C1C; }
+
+        .action-btn:active, .action-btn:focus, .game-btn:active, .game-btn:focus {
+            filter: brightness(0.96);
+            outline: 2px solid #3B82F6;
+        }
+
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 1rem;
+            box-sizing: border-box;
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 1.8rem;
+            border-radius: 1.2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin: auto;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            animation: modal-appear 0.3s ease-out;
+        }
+
+        @keyframes modal-appear {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-content h2 {
+            color: #2563EB;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .modal-content h2:after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(90deg, #3B82F6 0%, #93C5FD 100%);
+            border-radius: 3px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 0.8rem;
+            font-size: 1rem;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 0.25rem;
+            color: #6B7280;
+            font-size: 0.875rem;
+        }
+
+        .settings-form {
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            font-size: 1rem;
+            border-radius: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #3B82F6 0%, #60A5FA 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #F3F4F6;
+            color: #4B5563;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* 结果弹窗样式 */
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+        }
+
+        .result-content {
+            background-color: white;
+            padding: 2.2rem;
+            border-radius: 1.2rem;
+            max-width: 800px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            animation: modal-appear 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .result-header {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #2563EB;
+            margin-bottom: 1.8rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .result-header:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #3B82F6 0%, #93C5FD 100%);
+            border-radius: 3px;
+        }
+
+        .result-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+            gap: 1.5rem;
+        }
+
+        .player-result {
+            flex: 1;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            background: #F9FAFB;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .player-result.winner {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border: 2px solid #34D399;
+            transform: scale(1.03);
+        }
+
+        .player-result h3 {
+            font-size: 1.5rem;
+            color: #1F2937;
+            margin-bottom: 1rem;
+        }
+
+        .player-result p {
+            font-size: 1.1rem;
+            color: #4B5563;
+            margin: 0.5rem 0;
+        }
+
+        .player-result .highlight {
+            color: #2563EB;
+            font-weight: 600;
+        }
+
+        /* 重新定义的响应式布局 */
+        @media (max-width: 1024px) {
+            .game-area {
+                flex-direction: column;
+            }
+            .player-section {
+                margin-bottom: 1.5rem;
+                width: 100%;
+            }
+            .navbar-content {
+                justify-content: center;
+            }
+            .navbar-content h1 {
+                margin-bottom: 0.5rem;
+            }
+            .result-stats {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            /* 优化键盘在垂直布局下的样式 */
+            .virtual-keyboard {
+                padding: 0.6rem 0.4rem 0.4rem;
+                gap: 0.3rem;
+            }
+            .keyboard-row {
+                gap: 0.3rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+            .container { 
+                padding: 0.75rem; 
+                max-width: 100%;
+            }
+            .navbar {
+                padding: 0.75rem;
+            }
+            .navbar-content h1 {
+                font-size: 1.4rem;
+            }
+            .navbar .action-bar {
+                gap: 0.8rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .player-section {
+                padding: 0.75rem;
+            }
+            .player-avatar {
+                width: 36px;
+                height: 36px;
+            }
+            .player-header {
+                margin-bottom: 0.75rem;
+                align-items: center;
+            }
+            .player-name {
+                font-size: 1.2rem;
+            }
+            .game-info {
+                padding: 0.75rem;
+                gap: 0.75rem;
+                margin-bottom: 0.75rem;
+            }
+            .card { 
+                height: auto;
+                min-height: 140px;
+                padding: 1rem; 
+                margin: 0.75rem 0;
+            }
+            .card h2 {
+                font-size: 1.6rem;
+                margin-bottom: 0.5rem;
+            }
+            .input-box {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+            .virtual-keyboard {
+                padding: 0.6rem 0.4rem;
+                gap: 0.25rem;
+            }
+            .keyboard-row {
+                gap: 0.25rem;
+                margin-bottom: 0.4rem;
+            }
+            .keyboard-key {
+                height: 2.2rem;
+                font-size: 0.95rem;
+                border-radius: 0.6rem;
+            }
+            .result-content {
+                padding: 1.5rem;
+                max-width: 90%;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container { 
+                padding: 0.5rem; 
+            }
+            .navbar {
+                padding: 0.5rem;
+                border-radius: 0 0 0.75rem 0.75rem;
+            }
+            .navbar-content h1 {
+                font-size: 1.3rem;
+                margin-bottom: 0.5rem;
+            }
+            .navbar .action-btn {
+                font-size: 0.85rem;
+                padding: 0.3rem 0.75rem;
+            }
+            .player-header {
+                flex-direction: row;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                padding-bottom: 0.5rem;
+            }
+            .player-info {
+                flex: 0 0 auto;
+            }
+            .game-info { 
+                flex: 1 1 100%;
+                margin-top: 0.5rem;
+                padding: 0.5rem;
+                justify-content: space-around;
+            }
+            .game-info div {
+                font-size: 0.9rem;
+                white-space: nowrap;
+            }
+            .card { 
+                min-height: 120px;
+                padding: 0.75rem;
+                margin: 0.5rem 0;
+            }
+            .card h2 {
+                font-size: 1.4rem;
+            }
+            .word-display {
+                gap: 0.4rem;
+                margin: 0.5rem 0;
+            }
+            .input-box {
+                width: 2.2rem;
+                height: 2.2rem;
+                font-size: 1.2rem;
+            }
+            .virtual-keyboard { 
+                padding: 0.5rem 0.35rem;
+                gap: 0.25rem;
+            }
+            .keyboard-row {
+                gap: 0.2rem;
+                min-height: 2.1rem;
+                margin-bottom: 0.35rem;
+            }
+            .keyboard-key {
+                height: 2.1rem;
+                font-size: 0.9rem;
+                border-radius: 0.5rem;
+            }
+            .action-bar { 
+                gap: 0.4rem; 
+                margin: 0.5rem 0;
+            }
+            .game-btn {
+                font-size: 0.85rem;
+                padding: 0.3rem 0.75rem;
+                min-height: 2.1rem;
+            }
+            .result-content {
+                padding: 1.25rem;
+                max-width: 95%;
+            }
+            .result-header {
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .player-header {
+                flex-direction: column;
+                align-items: center;
+            }
+            .player-info {
+                margin-bottom: 0.5rem;
+            }
+            .game-info {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            .game-info div {
+                font-size: 0.85rem;
+                padding: 0.25rem 0.5rem;
+            }
+            .card { 
+                min-height: 110px;
+                padding: 0.5rem;
+            }
+            .card h2 {
+                font-size: 1.3rem;
+            }
+            .input-box {
+                width: 2rem;
+                height: 2rem;
+                font-size: 1.1rem;
+            }
+            .virtual-keyboard {
+                padding: 0.4rem 0.25rem;
+                gap: 0.2rem;
+            }
+            .keyboard-row {
+                gap: 0.15rem;
+                min-height: 1.9rem;
+                margin-bottom: 0.3rem;
+            }
+            /* 在极小屏幕上更优化键盘布局 */
+            .keyboard-key {
+                height: 1.9rem;
+                font-size: 0.8rem;
+                border-radius: 0.4rem;
+            }
+        }
+
+        /* 添加更小屏幕的键盘优化 */
+        @media (max-width: 400px) {
+            .virtual-keyboard {
+                padding: 0.3rem 0.2rem;
+            }
+            .keyboard-row {
+                gap: 0.1rem;
+            }
+            .keyboard-key {
+                height: 1.8rem;
+                font-size: 0.75rem;
+                border-radius: 0.3rem;
+            }
+            .keyboard-key.delete, .keyboard-key.enter {
+                font-size: 0.7rem;
+            }
+            .input-box {
+                width: 1.8rem;
+                height: 1.8rem;
+                font-size: 1rem;
+            }
+        }
+        
+        /* 防止Safari中出现的常见问题 */
+        @supports (-webkit-touch-callout: none) {
+            .keyboard-key {
+                -webkit-touch-callout: none; /* 防止长按弹出菜单 */
+            }
+            
+            /* 防止iOS自动缩放 */
+            input, select, textarea, button {
+                font-size: 16px;
+            }
+        }
+        
+        /* 添加键盘容器溢出保护 */
+        #player1Keyboard, #player2Keyboard {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        /* 移动端对战区域优化 */
+        @media (max-width: 480px) {
+            .player-section + .player-section {
+                margin-top: 1rem;
+                border-top: 1px solid #E5E7EB;
+                padding-top: 1rem;
+            }
+        }
+
+        /* 添加按键活跃状态样式 */
+        .keyboard-key.active {
+            transform: scale(0.95);
+            opacity: 0.8;
+            transition: all 0.1s ease;
+        }
+        
+        /* 在键盘交互样式中添加触摸设备支持 */
+        @media (hover: none) and (pointer: coarse) {
+            .keyboard-key {
+                -webkit-touch-callout: none; /* 防止长按弹出菜单 */
+                -webkit-tap-highlight-color: transparent; /* 去除iOS点击高亮 */
+                min-height: 36px; /* 保证按键有足够的触摸区域 */
+            }
+        }
+        
+        /* 确保按键即使在小屏幕上也有足够的触摸区域 */
+        @media (pointer: coarse) {
+            .keyboard-key {
+                min-height: 30px;
+                min-width: 20px;
+            }
+            
+            /* 防止iOS上的各种触摸问题 */
+            .keyboard-key:active {
+                opacity: 0.7;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <h1>单词拼写挑战 - 双人版</h1>
+            <div class="action-bar">
+                <button class="action-btn btn-settings" id="settingsBtn">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 5 15.4a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 5 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 16 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19 8.6a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09A1.65 1.65 0 0 0 19 15.4z"/></svg>
+                  设置
+                </button>
+                <button class="action-btn btn-wordlist" id="wordListBtn">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4h16v16H4z"/></svg>
+                  词库管理
+                </button>
+                <button class="action-btn btn-start" id="globalStartGameBtn">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 3v18l15-9L5 3z"/></svg>
+                    开始游戏
+                </button>
+                <button class="action-btn btn-help" id="helpBtn">
+                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 1 1 5.82 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
+                  帮助
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="game-area">
+            <!-- 玩家1区域 -->
+            <div class="player-section" id="player1Section">
+                <div class="player-header">
+                    <div class="player-info">
+                        <div class="player-avatar">1</div>
+                        <div class="player-name">玩家1</div>
+                    </div>
+                    <div class="game-info">
+                        <div>正确: <span id="player1CorrectCount">0</span></div>
+                        <div>当前: <span id="player1CurrentWord">0</span>/<span id="player1TotalWords">0</span></div>
+                        <div>用时: <span id="player1Timer">00:00</span></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 id="player1Prompt" class="text-center">准备开始</h2>
+                    <div class="word-display" id="player1WordDisplay"></div>
+                </div>
+
+                <div class="action-bar" id="player1ActionBar">
+                    <button class="action-btn btn-settings" id="player1SettingsBtn">
+                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 5 15.4a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 5 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 16 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19 8.6a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09A1.65 1.65 0 0 0 19 15.4z"/></svg>
+                      设置
+                    </button>
+                    <button class="action-btn btn-wordlist" id="player1WordListBtn">
+                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4h16v16H4z"/></svg>
+                      词库管理
+                    </button>
+                    <button class="action-btn btn-start" id="player1StartBtn">
+                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 3v18l15-9L5 3z"/></svg>
+                      开始游戏
+                    </button>
+                    <button class="action-btn btn-help" id="player1HelpBtn">
+                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 1 1 5.82 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
+                      帮助
+                    </button>
+                </div>
+
+                <div class="virtual-keyboard" id="player1Keyboard"></div>
+            </div>
+
+            <!-- 玩家2区域 -->
+            <div class="player-section" id="player2Section">
+                <div class="player-header">
+                    <div class="player-info">
+                        <div class="player-avatar">2</div>
+                        <div class="player-name">玩家2</div>
+                    </div>
+                    <div class="game-info">
+                        <div>正确: <span id="player2CorrectCount">0</span></div>
+                        <div>当前: <span id="player2CurrentWord">0</span>/<span id="player2TotalWords">0</span></div>
+                        <div>用时: <span id="player2Timer">00:00</span></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 id="player2Prompt" class="text-center">准备开始</h2>
+                    <div class="word-display" id="player2WordDisplay"></div>
+                </div>
+
+                <div class="action-bar" id="player2ActionBar">
+                    <button class="action-btn btn-settings" id="player2SettingsBtn">
+                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 5 15.4a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 5 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 16 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19 8.6a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09A1.65 1.65 0 0 0 19 15.4z"/></svg>
+                      设置
+                    </button>
+                    <button class="action-btn btn-wordlist" id="player2WordListBtn">
+                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4h16v16H4z"/></svg>
+                      词库管理
+                    </button>
+                    <button class="action-btn btn-start" id="player2StartBtn">
+                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 3v18l15-9L5 3z"/></svg>
+                      开始游戏
+                    </button>
+                    <button class="action-btn btn-help" id="player2HelpBtn">
+                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 1 1 5.82 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
+                      帮助
+                    </button>
+                </div>
+
+                <div class="virtual-keyboard" id="player2Keyboard"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置弹窗 -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <h2>游戏设置</h2>
+            <div class="settings-form">
+                <div class="form-group">
+                    <label for="wordCount">单词数量:</label>
+                    <input type="number" id="wordCount" min="5" max="50" value="10">
+                </div>
+                <div class="form-group">
+                    <label for="timeLimit">时间限制(秒):</label>
+                    <input type="number" id="timeLimit" min="0" value="0">
+                    <small>0表示无时间限制</small>
+                </div>
+                <div class="form-group">
+                    <label for="wordList">词库选择:</label>
+                    <select id="wordList">
+                        <option value="basic">基础词汇</option>
+                        <option value="animals">动物</option>
+                        <option value="food">食物</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button class="btn btn-secondary" id="cancelSettings">取消</button>
+                    <button class="btn btn-primary" id="saveSettings">保存设置</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 帮助弹窗 -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <h2>游戏说明</h2>
+            <div style="color: #4B5563; line-height: 1.6;">
+                <p>1. 点击"开始游戏"开始挑战</p>
+                <p>2. 根据中文提示拼写对应的英文单词</p>
+                <p>3. 使用虚拟键盘输入字母</p>
+                <p>4. 按回车键确认答案</p>
+                <p>5. 完成后查看成绩统计</p>
+                <p style="margin-top: 1rem; font-weight: 500; color: #2563EB;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline; margin-right: 5px; vertical-align: -2px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    提示：双人模式下，两位玩家同时挑战相同单词，比拼速度和正确率！
+                </p>
+            </div>
+            <div style="display: flex; justify-content: center; margin-top: 1.5rem;">
+                <button class="btn btn-primary" id="closeHelp">我知道了</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 游戏结束弹窗 -->
+    <div class="result-modal" id="resultModal">
+        <div class="result-content">
+            <h2 class="result-header">🎉 游戏结束</h2>
+            <div class="result-stats">
+                <div class="player-result" id="player1Result">
+                    <h3>玩家1</h3>
+                    <p>正确数：<span class="highlight" id="player1ResultCorrect">0</span></p>
+                    <p>用时：<span class="highlight" id="player1ResultTime">00:00</span></p>
+                </div>
+                <div class="player-result" id="player2Result">
+                    <h3>玩家2</h3>
+                    <p>正确数：<span class="highlight" id="player2ResultCorrect">0</span></p>
+                    <p>用时：<span class="highlight" id="player2ResultTime">00:00</span></p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
+                <button class="action-btn btn-start" id="restartBtn">再来一局</button>
+                <button class="action-btn btn-help" id="closeResultBtn">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 词库管理弹窗 -->
+    <div class="modal" id="wordListModal">
+        <div class="modal-content">
+            <h2>词库管理</h2>
+            <div class="word-list-form">
+                <div class="form-group">
+                    <label for="importTXT">上传文本文件导入:</label>
+                    <input type="file" id="importTXT" accept=".txt,text/plain">
+                    <small>每行"中文,英文"，如：苹果,apple。可含表头。</small>
+                </div>
+                <div class="form-group">
+                    <label>手动添加单词:</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="text" id="newPrompt" placeholder="中文提示" style="flex: 1;">
+                        <input type="text" id="newAnswer" placeholder="英文单词" style="flex: 1;">
+                        <button class="btn btn-secondary" id="addWordBtn" style="white-space: nowrap;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            添加
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>当前词库:</label>
+                    <div id="currentWordList" style="max-height: 200px; overflow-y: auto; margin-top: 0.5rem; border: 1px solid #E5E7EB; border-radius: 0.5rem; padding: 0.5rem;">
+                        <!-- 词库列表将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button class="btn btn-secondary" id="closeWordList">关闭</button>
+                    <button class="btn btn-primary" id="saveWordList">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        导出词库
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 游戏状态
+        let gameState = {
+            isPlaying: false,
+            players: {
+                player1: {
+                    currentWordIndex: 0,
+                    correctCount: 0,
+                    startTime: null,
+                    endTime: null,  // 新增：记录完成时间
+                    isFinished: false,  // 新增：标记是否完成
+                    timer: null,
+                    currentInput: '',
+                    correctWords: []
+                },
+                player2: {
+                    currentWordIndex: 0,
+                    correctCount: 0,
+                    startTime: null,
+                    endTime: null,  // 新增：记录完成时间
+                    isFinished: false,  // 新增：标记是否完成
+                    timer: null,
+                    currentInput: '',
+                    correctWords: []
+                }
+            },
+            settings: {
+                wordCount: 10,
+                timeLimit: 0,
+                wordList: 'basic'
+            },
+            currentWordList: []
+        };
+
+        // 基础词库数据
+        const wordLists = {
+            basic: [
+                { prompt: "香蕉", answer: "banana" },
+                { prompt: "苹果", answer: "apple" },
+                { prompt: "猫", answer: "cat" },
+                { prompt: "狗", answer: "dog" },
+                { prompt: "书", answer: "book" }
+            ],
+            animals: [
+                { prompt: "老虎", answer: "tiger" },
+                { prompt: "狮子", answer: "lion" },
+                { prompt: "大象", answer: "elephant" },
+                { prompt: "长颈鹿", answer: "giraffe" },
+                { prompt: "熊猫", answer: "panda" }
+            ],
+            food: [
+                { prompt: "披萨", answer: "pizza" },
+                { prompt: "汉堡", answer: "hamburger" },
+                { prompt: "面条", answer: "noodle" },
+                { prompt: "米饭", answer: "rice" },
+                { prompt: "面包", answer: "bread" }
+            ]
+        };
+
+        // 初始化游戏
+        function initGame() {
+            // 加载设置
+            const savedSettings = localStorage.getItem('gameSettings');
+            if (savedSettings) {
+                gameState.settings = JSON.parse(savedSettings);
+            }
+
+            // 初始化界面
+            updateSettingsUI();
+            createKeyboards();
+            setupEventListeners();
+            renderActionBars();
+            
+            // 初始化声音效果
+            initSounds();
+            
+            // 添加键盘大小自适应
+            optimizeKeyboardSize();
+            window.addEventListener('resize', optimizeKeyboardSize);
+        }
+        
+        // 初始化声音效果
+        function initSounds() {
+            // 创建简单的音频上下文
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return; // 浏览器不支持音频API时静默失败
+            
+            gameState.audioContext = new AudioContext();
+            
+            // 定义几种不同的声音
+            gameState.sounds = {
+                keyPress: {
+                    frequency: 800,
+                    duration: 30,
+                    type: 'sine',
+                    volume: 0.1
+                },
+                correct: {
+                    frequency: 1200,
+                    duration: 100,
+                    type: 'sine',
+                    volume: 0.2
+                },
+                wrong: {
+                    frequency: 300,
+                    duration: 100,
+                    type: 'triangle',
+                    volume: 0.2
+                }
+            };
+        }
+        
+        // 播放声音效果
+        function playSound(type) {
+            if (!gameState.audioContext || !gameState.sounds[type]) return;
+            
+            try {
+                const sound = gameState.sounds[type];
+                const oscillator = gameState.audioContext.createOscillator();
+                const gainNode = gameState.audioContext.createGain();
+                
+                oscillator.type = sound.type;
+                oscillator.frequency.value = sound.frequency;
+                gainNode.gain.value = sound.volume;
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(gameState.audioContext.destination);
+                
+                oscillator.start();
+                setTimeout(() => {
+                    oscillator.stop();
+                }, sound.duration);
+            } catch (e) {
+                console.log('Error playing sound:', e);
+            }
+        }
+
+        // 键盘大小动态优化
+        function optimizeKeyboardSize() {
+            const screenWidth = window.innerWidth;
+            const keyboards = [document.getElementById('player1Keyboard'), document.getElementById('player2Keyboard')];
+            
+            keyboards.forEach(keyboard => {
+                if (!keyboard) return;
+                
+                const keys = keyboard.querySelectorAll('.keyboard-key:not(.enter):not(.delete)');
+                const specialKeys = keyboard.querySelectorAll('.keyboard-key.enter, .keyboard-key.delete');
+                
+                // 清除可能影响布局的内联样式
+                keyboard.querySelectorAll('.keyboard-row').forEach(row => {
+                    row.style.width = '100%';
+                    row.style.justifyContent = 'center';
+                    row.style.gap = '0.2rem';
+                });
+                
+                // 根据屏幕宽度设置键盘样式
+                if (screenWidth <= 400) {
+                    // 超小屏幕
+                    keyboard.style.padding = '0.3rem 0.2rem';
+                    
+                    keys.forEach(key => {
+                        key.style.flex = '1 0 6%';
+                        key.style.minWidth = '6%';
+                        key.style.maxWidth = '8%';
+                        key.style.height = '1.8rem';
+                        key.style.fontSize = '0.75rem';
+                        key.style.borderRadius = '0.3rem';
+                    });
+                    
+                    specialKeys.forEach(key => {
+                        key.style.flex = '1.3 0 10%';
+                        key.style.maxWidth = '14%';
+                        key.style.fontSize = '0.7rem';
+                        key.style.height = '1.8rem';
+                    });
+                } else if (screenWidth <= 480) {
+                    // 小屏幕
+                    keyboard.style.padding = '0.4rem 0.25rem';
+                    
+                    keys.forEach(key => {
+                        key.style.flex = '1 0 7%';
+                        key.style.minWidth = '7%';
+                        key.style.maxWidth = '9%';
+                        key.style.height = '2rem';
+                        key.style.fontSize = '0.8rem';
+                        key.style.borderRadius = '0.4rem';
+                    });
+                    
+                    specialKeys.forEach(key => {
+                        key.style.flex = '1.4 0 11%';
+                        key.style.maxWidth = '15%';
+                        key.style.fontSize = '0.8rem';
+                        key.style.height = '2rem';
+                    });
+                } else if (screenWidth <= 640) {
+                    // 中小屏幕
+                    keyboard.style.padding = '0.5rem 0.3rem';
+                    
+                    keys.forEach(key => {
+                        key.style.flex = '1 0 8%';
+                        key.style.minWidth = '8%';
+                        key.style.maxWidth = '10%';
+                        key.style.height = '2.1rem';
+                        key.style.fontSize = '0.9rem';
+                        key.style.borderRadius = '0.45rem';
+                    });
+                    
+                    specialKeys.forEach(key => {
+                        key.style.flex = '1.5 0 12%';
+                        key.style.maxWidth = '16%';
+                        key.style.fontSize = '0.9rem';
+                        key.style.height = '2.1rem';
+                    });
+                } else {
+                    // 640px以上的屏幕
+                    keyboard.style.padding = '0.6rem 0.4rem';
+                    
+                    keys.forEach(key => {
+                        key.style.flex = '1 0 8%';
+                        key.style.minWidth = '8%';
+                        key.style.maxWidth = '10%';
+                        key.style.height = '2.2rem';
+                        key.style.fontSize = '1rem';
+                        key.style.borderRadius = '0.5rem';
+                    });
+                    
+                    specialKeys.forEach(key => {
+                        key.style.flex = '1.5 0 12%';
+                        key.style.maxWidth = '15%';
+                        key.style.fontSize = '1rem';
+                        key.style.height = '2.2rem';
+                    });
+                }
+                
+                // 确保键盘容器宽度为100%
+                keyboard.style.width = '100%';
+                keyboard.style.maxWidth = '100%';
+            });
+        }
+
+        // 创建虚拟键盘
+        function createKeyboards() {
+            ['player1', 'player2'].forEach(player => {
+                const keyboard = document.getElementById(`${player}Keyboard`);
+                keyboard.innerHTML = '';
+                
+                // 使用更紧凑的QWERTY键盘布局
+                const rows = [
+                    [
+                        {key:'Q', color:'key-red'},{key:'W', color:'key-green'},{key:'E', color:'key-blue'},
+                        {key:'R', color:'key-yellow'},{key:'T', color:'key-orange'},{key:'Y', color:'key-purple'},
+                        {key:'U', color:'key-pink'},{key:'I', color:'key-green'},{key:'O', color:'key-red'},{key:'P', color:'key-blue'}
+                    ],
+                    [
+                        {key:'A', color:'key-pink'},{key:'S', color:'key-green'},{key:'D', color:'key-blue'},
+                        {key:'F', color:'key-yellow'},{key:'G', color:'key-orange'},{key:'H', color:'key-purple'},
+                        {key:'J', color:'key-pink'},{key:'K', color:'key-green'},{key:'L', color:'key-blue'},{key:'↵', enter:true}
+                    ],
+                    [
+                        {key:'Z', color:'key-green'},{key:'X', color:'key-blue'},{key:'C', color:'key-yellow'},
+                        {key:'V', color:'key-orange'},{key:'B', color:'key-blue'},{key:'N', color:'key-pink'},
+                        {key:'M', color:'key-green'},{key:'⌫', del:true}
+                    ]
+                ];
+
+                rows.forEach((row) => {
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'keyboard-row';
+                    
+                    // 补齐第三行，使其按键数量一致
+                    if (row.length < 10) {
+                        // 计算需要在开头补充的空白按键数量
+                        const blankCount = Math.floor((10 - row.length) / 2);
+                        for (let i = 0; i < blankCount; i++) {
+                            const blankKey = document.createElement('div');
+                            blankKey.className = 'keyboard-key blank';
+                            blankKey.style.background = 'transparent';
+                            blankKey.style.boxShadow = 'none';
+                            rowDiv.appendChild(blankKey);
+                        }
+                    }
+                    
+                    row.forEach((item) => {
+                        if (item.enter) {
+                            const enterKey = document.createElement('button');
+                            enterKey.className = 'keyboard-key enter';
+                            enterKey.textContent = '↵';
+                            enterKey.onclick = () => handleEnter(player);
+                            rowDiv.appendChild(enterKey);
+                        } else if (item.del) {
+                            const deleteKey = document.createElement('button');
+                            deleteKey.className = 'keyboard-key delete';
+                            deleteKey.textContent = '⌫';
+                            deleteKey.onclick = () => handleBackspace(player);
+                            rowDiv.appendChild(deleteKey);
+                        } else {
+                            const keyElement = document.createElement('button');
+                            keyElement.className = 'keyboard-key ' + (item.color||'');
+                            keyElement.textContent = item.key;
+                            keyElement.onclick = () => handleKeyPress(player, item.key);
+                            rowDiv.appendChild(keyElement);
+                        }
+                    });
+                    keyboard.appendChild(rowDiv);
+                });
+                
+                // 调用优化函数立即优化键盘大小
+                setTimeout(() => optimizeKeyboardSize(), 0);
+            });
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 导航栏按钮事件
+            document.getElementById('settingsBtn').onclick = () => showSettings();
+            document.getElementById('helpBtn').onclick = () => showHelp();
+            document.getElementById('saveSettings').onclick = saveSettings;
+            document.getElementById('cancelSettings').onclick = () => hideSettings();
+            document.getElementById('closeHelp').onclick = () => hideHelp();
+            document.getElementById('wordListBtn').onclick = () => showWordList();
+            document.getElementById('closeWordList').onclick = () => hideWordList();
+            document.getElementById('addWordBtn').onclick = addWord;
+            document.getElementById('importTXT').onchange = importTXT;
+            document.getElementById('saveWordList').onclick = exportWordList;
+            document.getElementById('restartBtn').onclick = restartGame;
+            document.getElementById('globalStartGameBtn').onclick = () => startGame();
+            document.getElementById('closeResultBtn').onclick = () => {
+                document.getElementById('resultModal').style.display = 'none';
+                // 重置游戏状态
+                gameState.isPlaying = false;
+                gameState.players.player1.isFinished = false;
+                gameState.players.player2.isFinished = false;
+                
+                // 恢复初始界面状态
+                document.getElementById('player1Prompt').textContent = '准备开始';
+                document.getElementById('player1WordDisplay').innerHTML = '';
+                document.getElementById('player2Prompt').textContent = '准备开始';
+                document.getElementById('player2WordDisplay').innerHTML = '';
+                
+                // 重新渲染操作栏
+                renderActionBars();
+            };
+
+            // 玩家1按钮事件 - 这些按钮在游戏进行时由 renderActionBars 生成和绑定
+            // ... (注释掉的部分保持不变)
+
+            // 玩家2按钮事件 - 这些按钮在游戏进行时由 renderActionBars 生成和绑定
+            // ... (注释掉的部分保持不变)
+
+            // 键盘事件监听
+            document.addEventListener('keydown', handleKeyDown);
+        }
+
+        // 开始游戏
+        function startGame(player) {
+            // 重置玩家状态
+            ['player1', 'player2'].forEach(p => {
+                gameState.players[p].currentWordIndex = 0;
+                gameState.players[p].correctCount = 0;
+                gameState.players[p].startTime = Date.now();
+                gameState.players[p].endTime = null;  // 重置结束时间
+                gameState.players[p].isFinished = false;  // 重置完成状态
+                gameState.players[p].currentInput = '';
+                gameState.players[p].correctWords = [];
+                
+                // 重置UI
+                document.getElementById(`${p}Prompt`).textContent = "准备开始";
+                document.getElementById(`${p}WordDisplay`).innerHTML = "";
+            });
+            
+            // 设置游戏状态为进行中
+            gameState.isPlaying = true;
+            
+            if (player) {
+                // 单个玩家开始游戏
+                // 获取当前词库
+                const currentList = wordLists[gameState.settings.wordList];
+                if (!currentList || currentList.length === 0) {
+                    alert('当前词库为空，请先添加单词！');
+                    return;
+                }
+                
+                // 随机选择单词
+                gameState.currentWordList = shuffleArray([...currentList])
+                    .slice(0, Math.min(gameState.settings.wordCount, currentList.length));
+
+                // 更新界面
+                updateGameInfo(player);
+                showNextWord(player);
+
+                // 开始计时
+                if (gameState.settings.timeLimit > 0) {
+                    startTimer(player);
+                }
+            } else {
+                // 两个玩家同时开始游戏                
+                // 获取当前词库
+                const currentList = wordLists[gameState.settings.wordList];
+                if (!currentList || currentList.length === 0) {
+                    alert('当前词库为空，请先添加单词！');
+                    return;
+                }
+                
+                // 随机选择单词
+                gameState.currentWordList = shuffleArray([...currentList])
+                    .slice(0, Math.min(gameState.settings.wordCount, currentList.length));
+
+                // 更新界面
+                ['player1', 'player2'].forEach(p => {
+                    updateGameInfo(p);
+                    showNextWord(p);
+                });
+
+                // 开始计时
+                if (gameState.settings.timeLimit > 0) {
+                    ['player1', 'player2'].forEach(p => {
+                        startTimer(p);
+                    });
+                }
+            }
+            renderActionBars();
+        }
+
+        // 显示下一个单词
+        function showNextWord(player) {
+            const currentWord = gameState.currentWordList[gameState.players[player].currentWordIndex];
+            document.getElementById(`${player}Prompt`).textContent = currentWord.prompt;
+            
+            // 重置当前输入
+            gameState.players[player].currentInput = '';
+            
+            // 创建输入框
+            const wordDisplay = document.getElementById(`${player}WordDisplay`);
+            wordDisplay.innerHTML = '';
+            for (let i = 0; i < currentWord.answer.length; i++) {
+                const input = document.createElement('div');
+                input.className = 'input-box';
+                input.dataset.index = i;
+                wordDisplay.appendChild(input);
+            }
+        }
+
+        // 处理按键输入
+        function handleKeyPress(player, key) {
+            if (!gameState.isPlaying) return;
+
+            const inputs = document.querySelectorAll(`#${player}WordDisplay .input-box`);
+            const currentWord = gameState.currentWordList[gameState.players[player].currentWordIndex];
+            
+            if (gameState.players[player].currentInput.length < currentWord.answer.length) {
+                gameState.players[player].currentInput += key;
+                const currentInput = inputs[gameState.players[player].currentInput.length - 1];
+                if (currentInput) {
+                    currentInput.textContent = key;
+                    
+                    // 添加按键动画效果
+                    const keyElement = document.querySelector(`#${player}Keyboard .keyboard-key:not(.enter):not(.delete):nth-child(${key.charCodeAt(0) - 64})`);
+                    if (keyElement) {
+                        keyElement.classList.add('active');
+                        setTimeout(() => keyElement.classList.remove('active'), 100);
+                    }
+                    
+                    // 播放声音
+                    playSound('keyPress');
+                }
+            }
+        }
+
+        // 处理删除键
+        function handleBackspace(player) {
+            if (!gameState.isPlaying) return;
+
+            if (gameState.players[player].currentInput.length > 0) {
+                gameState.players[player].currentInput = gameState.players[player].currentInput.slice(0, -1);
+                const inputs = document.querySelectorAll(`#${player}WordDisplay .input-box`);
+                const lastInput = inputs[gameState.players[player].currentInput.length];
+                if (lastInput) {
+                    lastInput.textContent = '';
+                    
+                    // 添加按键动画和声音
+                    const keyElement = document.querySelector(`#${player}Keyboard .keyboard-key.delete`);
+                    if (keyElement) {
+                        keyElement.classList.add('active');
+                        setTimeout(() => keyElement.classList.remove('active'), 100);
+                    }
+                    
+                    // 播放声音
+                    playSound('keyPress');
+                }
+            }
+        }
+
+        // 处理回车键
+        function handleEnter(player) {
+            if (!gameState.isPlaying) return;
+
+            const currentWord = gameState.currentWordList[gameState.players[player].currentWordIndex];
+            const inputs = document.querySelectorAll(`#${player}WordDisplay .input-box`);
+            
+            // 添加按键动画
+            const keyElement = document.querySelector(`#${player}Keyboard .keyboard-key.enter`);
+            if (keyElement) {
+                keyElement.classList.add('active');
+                setTimeout(() => keyElement.classList.remove('active'), 100);
+            }
+
+            if (gameState.players[player].currentInput.toLowerCase() === currentWord.answer.toLowerCase()) {
+                gameState.players[player].correctCount++;
+                gameState.players[player].correctWords[gameState.players[player].currentWordIndex] = true;
+                
+                // 显示正确反馈
+                inputs.forEach(input => {
+                    input.style.backgroundColor = '#86EFAC';
+                });
+                
+                // 播放正确声音
+                playSound('correct');
+            } else {
+                // 显示错误反馈
+                inputs.forEach(input => {
+                    input.style.backgroundColor = '#FCA5A5';
+                });
+                // 显示正确答案
+                const correctAnswer = currentWord.answer.toUpperCase();
+                for (let i = 0; i < correctAnswer.length; i++) {
+                    inputs[i].textContent = correctAnswer[i];
+                }
+                
+                // 播放错误声音
+                playSound('wrong');
+            }
+
+            // 延迟后进入下一个单词
+            setTimeout(() => {
+                gameState.players[player].currentWordIndex++;
+                
+                // 检查玩家是否完成所有单词
+                if (gameState.players[player].currentWordIndex >= gameState.currentWordList.length) {
+                    // 玩家完成所有单词
+                    playerFinished(player);
+                } else {
+                    // 显示下一个单词
+                    showNextWord(player);
+                    updateGameInfo(player);
+                }
+                
+                // 检查游戏是否结束(两个玩家都完成)
+                checkGameEnd();
+            }, 1500);
+        }
+
+        // 玩家完成所有单词后调用
+        function playerFinished(player) {
+            // 记录完成时间
+            gameState.players[player].endTime = Date.now();
+            gameState.players[player].isFinished = true;
+            
+            // 停止计时器
+            if (gameState.players[player].timer) {
+                clearInterval(gameState.players[player].timer);
+            }
+            
+            // 更新UI，显示完成状态
+            document.getElementById(`${player}Prompt`).textContent = "已完成!";
+            document.getElementById(`${player}WordDisplay`).innerHTML = "";
+
+            // 计算用时并更新显示
+            const totalTime = Math.floor((gameState.players[player].endTime - gameState.players[player].startTime) / 1000);
+            const minutes = Math.floor(totalTime / 60);
+            const seconds = totalTime % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById(`${player}Timer`).textContent = timeString;
+            
+            // 渲染玩家操作区
+            renderActionBars();
+        }
+
+        // 检查游戏是否结束(两个玩家都完成)
+        function checkGameEnd() {
+            if (gameState.players.player1.isFinished && gameState.players.player2.isFinished) {
+                endGame();
+            }
+        }
+
+        // 结束游戏
+        function endGame() {
+            gameState.isPlaying = false;
+            
+            // 确保所有计时器都已停止
+            ['player1', 'player2'].forEach(player => {
+                if (gameState.players[player].timer) {
+                    clearInterval(gameState.players[player].timer);
+                }
+            });
+            
+            // 计算每个玩家的总用时
+            ['player1', 'player2'].forEach(player => {
+                // 使用玩家的记录完成时间或当前时间(如果未完成)
+                const endTime = gameState.players[player].endTime || Date.now();
+                const totalTime = Math.floor((endTime - gameState.players[player].startTime) / 1000);
+                const minutes = Math.floor(totalTime / 60);
+                const seconds = totalTime % 60;
+                const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // 更新结果显示
+                document.getElementById(`${player}ResultCorrect`).textContent = gameState.players[player].correctCount;
+                document.getElementById(`${player}ResultTime`).textContent = timeString;
+            });
+
+            // 确定获胜者
+            const player1Correct = gameState.players.player1.correctCount;
+            const player2Correct = gameState.players.player2.correctCount;
+            
+            if (player1Correct > player2Correct) {
+                document.getElementById('player1Result').classList.add('winner');
+                document.getElementById('player2Result').classList.remove('winner');
+            } else if (player2Correct > player1Correct) {
+                document.getElementById('player2Result').classList.add('winner');
+                document.getElementById('player1Result').classList.remove('winner');
+            } else {
+                // 如果正确数相同，比较用时
+                const player1Time = gameState.players.player1.endTime - gameState.players.player1.startTime;
+                const player2Time = gameState.players.player2.endTime - gameState.players.player2.startTime;
+                
+                if (player1Time < player2Time) {
+                    document.getElementById('player1Result').classList.add('winner');
+                    document.getElementById('player2Result').classList.remove('winner');
+                } else if (player2Time < player1Time) {
+                    document.getElementById('player2Result').classList.add('winner');
+                    document.getElementById('player1Result').classList.remove('winner');
+                } else {
+                    // 如果用时也相同，则平局
+                    document.getElementById('player1Result').classList.add('winner');
+                    document.getElementById('player2Result').classList.add('winner');
+                }
+            }
+
+            // 显示结果弹窗
+            document.getElementById('resultModal').style.display = 'flex';
+        }
+
+        // 处理键盘事件
+        function handleKeyDown(event) {
+            if (!gameState.isPlaying) return;
+            if (event.ctrlKey || event.metaKey || event.altKey) return;
+
+            // 根据当前焦点确定是哪个玩家
+            const activeElement = document.activeElement;
+            const player = activeElement.closest('#player1Section') ? 'player1' : 
+                          activeElement.closest('#player2Section') ? 'player2' : null;
+            
+            if (!player) return;
+
+            if (event.key === 'Enter') {
+                handleEnter(player);
+            } else if (event.key === 'Backspace') {
+                handleBackspace(player);
+            } else if (/^[a-zA-Z]$/.test(event.key)) {
+                handleKeyPress(player, event.key.toUpperCase());
+            }
+        }
+
+        // 更新游戏信息
+        function updateGameInfo(player) {
+            document.getElementById(`${player}CorrectCount`).textContent = gameState.players[player].correctCount;
+            document.getElementById(`${player}CurrentWord`).textContent = gameState.players[player].currentWordIndex + 1;
+            document.getElementById(`${player}TotalWords`).textContent = gameState.currentWordList.length;
+        }
+
+        // 开始计时器
+        function startTimer(player) {
+            if (gameState.players[player].timer) clearInterval(gameState.players[player].timer);
+            
+            gameState.players[player].timer = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - gameState.players[player].startTime) / 1000);
+                const remaining = gameState.settings.timeLimit - elapsed;
+                
+                if (remaining <= 0) {
+                    endGame();
+                    return;
+                }
+
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                document.getElementById(`${player}Timer`).textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // 重新开始游戏
+        function restartGame() {
+            document.getElementById('resultModal').style.display = 'none';
+            startGame();
+        }
+
+        // 显示设置
+        function showSettings(player) {
+            if (player) {
+                // 单个玩家的设置
+                document.getElementById('settingsModal').style.display = 'flex';
+                // 可以在这里添加玩家特定的设置
+            } else {
+                // 全局设置
+                document.getElementById('settingsModal').style.display = 'flex';
+            }
+        }
+
+        // 隐藏设置
+        function hideSettings() {
+            document.getElementById('settingsModal').style.display = 'none';
+        }
+
+        // 保存设置
+        function saveSettings() {
+            gameState.settings.wordCount = parseInt(document.getElementById('wordCount').value);
+            gameState.settings.timeLimit = parseInt(document.getElementById('timeLimit').value);
+            gameState.settings.wordList = document.getElementById('wordList').value;
+            
+            localStorage.setItem('gameSettings', JSON.stringify(gameState.settings));
+            hideSettings();
+        }
+
+        // 显示帮助
+        function showHelp(player) {
+            if (player) {
+                // 单个玩家的帮助
+                document.getElementById('helpModal').style.display = 'flex';
+                // 可以在这里添加玩家特定的帮助内容
+            } else {
+                // 全局帮助
+                document.getElementById('helpModal').style.display = 'flex';
+            }
+        }
+
+        // 隐藏帮助
+        function hideHelp() {
+            document.getElementById('helpModal').style.display = 'none';
+        }
+
+        // 更新设置界面
+        function updateSettingsUI() {
+            document.getElementById('wordCount').value = gameState.settings.wordCount;
+            document.getElementById('timeLimit').value = gameState.settings.timeLimit;
+            document.getElementById('wordList').value = gameState.settings.wordList;
+        }
+
+        // 工具函数：打乱数组
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // 动态渲染按钮区
+        function renderActionBars() {
+            ['player1', 'player2'].forEach(player => {
+                const bar = document.getElementById(`${player}ActionBar`);
+                const playerState = gameState.players[player];
+
+                if (!gameState.isPlaying || playerState.isFinished) {
+                    // 游戏未开始或当前玩家已完成所有单词
+                    const message = playerState.isFinished ? "游戏完成！" : "等待游戏开始...";
+                    bar.innerHTML = `<p style="text-align:center; color: #6B7280; padding: 1rem;">${message}</p>`;
+                } else {
+                    // 游戏进行中
+                    bar.innerHTML = `
+                        <button class="game-btn btn-prev" id="${player}PrevBtn">
+                          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+                          上一个
+                        </button>
+                        <button class="game-btn btn-next" id="${player}NextBtn">
+                          下一个
+                          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+                        </button>
+                        <button class="game-btn btn-hint" id="${player}HintBtn">
+                          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm0 14v2m0-8v4"/></svg>
+                          提示
+                        </button>
+                        <button class="game-btn btn-del" id="${player}DelBtn">
+                          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                          删除
+                        </button>
+                        <button class="game-btn btn-ok" id="${player}OkBtn">
+                          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                          确认
+                        </button>
+                    `;
+                    document.getElementById(`${player}PrevBtn`).onclick = () => prevWord(player);
+                    document.getElementById(`${player}NextBtn`).onclick = () => nextWord(player);
+                    document.getElementById(`${player}HintBtn`).onclick = () => showHint(player);
+                    document.getElementById(`${player}DelBtn`).onclick = () => handleBackspace(player);
+                    document.getElementById(`${player}OkBtn`).onclick = () => handleEnter(player);
+                }
+            });
+        }
+
+        // 游戏流程相关操作函数 (新增)
+        function prevWord(player) {
+            if (!gameState.isPlaying || !gameState.players[player]) return;
+            const playerState = gameState.players[player];
+            if (playerState.currentWordIndex > 0) {
+                playerState.currentWordIndex--;
+                showNextWord(player);
+                updateGameInfo(player);
+                 // 清除之前的答案状态和提示
+                const inputs = document.querySelectorAll(`#${player}WordDisplay .input-box`);
+                inputs.forEach(input => {
+                    input.style.backgroundColor = ''; // Reset background
+                    input.textContent = ''; // Clear content if needed for re-attempt
+                });
+                const tip = document.getElementById(`${player}HintTip`);
+                if (tip) tip.style.display = 'none';
+            }
+        }
+
+        function nextWord(player) {
+            if (!gameState.isPlaying || !gameState.players[player]) return;
+            const playerState = gameState.players[player];
+            if (playerState.currentWordIndex < gameState.currentWordList.length - 1) {
+                playerState.currentWordIndex++;
+                showNextWord(player);
+                updateGameInfo(player);
+                // 清除之前的答案状态和提示
+                const inputs = document.querySelectorAll(`#${player}WordDisplay .input-box`);
+                inputs.forEach(input => {
+                    input.style.backgroundColor = ''; // Reset background
+                     input.textContent = ''; // Clear content if needed for re-attempt
+                });
+                const tip = document.getElementById(`${player}HintTip`);
+                if (tip) tip.style.display = 'none';
+            }
+        }
+
+        // 显示提示
+        function showHint(player) {
+            if (!gameState.isPlaying) return;
+            const currentWord = gameState.currentWordList[gameState.players[player].currentWordIndex];
+            const answer = currentWord.answer.toUpperCase();
+            showHintTip(player, `提示：<b>${answer}</b>`);
+        }
+
+        // 在输入框下方显示提示内容
+        function showHintTip(player, msg) {
+            let tip = document.getElementById(`${player}HintTip`);
+            if (!tip) {
+                tip = document.createElement('div');
+                tip.id = `${player}HintTip`;
+                tip.className = 'hint-tip';
+                const wordDisplay = document.getElementById(`${player}WordDisplay`);
+                wordDisplay.parentNode.insertBefore(tip, wordDisplay.nextSibling);
+            }
+            tip.innerHTML = msg;
+            tip.style.display = 'inline-block';
+            // 3秒后自动隐藏
+            clearTimeout(tip._timer);
+            tip._timer = setTimeout(() => {
+                tip.style.display = 'none';
+            }, 3000);
+        }
+
+        // 词库管理相关函数
+        function showWordList(player) {
+            if (player) {
+                // 单个玩家的词库管理
+                document.getElementById('wordListModal').style.display = 'flex';
+                updateWordListDisplay();
+                // 可以在这里添加玩家特定的词库管理
+            } else {
+                // 全局词库管理
+                document.getElementById('wordListModal').style.display = 'flex';
+                updateWordListDisplay();
+            }
+        }
+
+        function hideWordList() {
+            document.getElementById('wordListModal').style.display = 'none';
+        }
+
+        function updateWordListDisplay() {
+            const container = document.getElementById('currentWordList');
+            container.innerHTML = '';
+            
+            const currentList = wordLists[gameState.settings.wordList];
+            if (!currentList || currentList.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #6B7280; padding: 1rem;">当前词库为空</div>';
+                return;
+            }
+
+            currentList.forEach((word, index) => {
+                const wordElement = document.createElement('div');
+                wordElement.style.display = 'flex';
+                wordElement.style.justifyContent = 'space-between';
+                wordElement.style.alignItems = 'center';
+                wordElement.style.padding = '0.75rem';
+                wordElement.style.borderBottom = '1px solid #E5E7EB';
+                wordElement.style.backgroundColor = index % 2 === 0 ? '#F9FAFB' : 'white';
+                
+                wordElement.innerHTML = `
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <span style="color: #374151;">${word.prompt}</span>
+                        <span style="color: #6B7280;">→</span>
+                        <span style="color: #3B82F6; font-weight: 500;">${word.answer}</span>
+                    </div>
+                    <button class="btn btn-secondary" style="padding: 0.25rem 0.5rem;" 
+                            onclick="deleteWord(${index})">删除</button>
+                `;
+                
+                container.appendChild(wordElement);
+            });
+
+            // 显示词库统计信息
+            const statsElement = document.createElement('div');
+            statsElement.style.padding = '0.75rem';
+            statsElement.style.backgroundColor = '#F3F4F6';
+            statsElement.style.borderTop = '1px solid #E5E7EB';
+            statsElement.style.fontSize = '0.875rem';
+            statsElement.style.color = '#6B7280';
+            statsElement.textContent = `共 ${currentList.length} 个单词`;
+            container.appendChild(statsElement);
+        }
+
+        function addWord() {
+            const prompt = document.getElementById('newPrompt').value.trim();
+            const answer = document.getElementById('newAnswer').value.trim();
+            
+            if (!prompt || !answer) {
+                alert('请输入完整的中文提示和英文单词');
+                return;
+            }
+
+            // 验证英文单词格式
+            if (!/^[a-zA-Z]+$/.test(answer)) {
+                alert('英文单词只能包含字母');
+                return;
+            }
+            
+            // 检查是否已存在
+            const currentList = wordLists[gameState.settings.wordList];
+            if (currentList.some(word => word.prompt === prompt || word.answer.toLowerCase() === answer.toLowerCase())) {
+                alert('该单词已存在');
+                return;
+            }
+            
+            wordLists[gameState.settings.wordList].push({ prompt, answer });
+            updateWordListDisplay();
+            
+            // 清空输入框
+            document.getElementById('newPrompt').value = '';
+            document.getElementById('newAnswer').value = '';
+        }
+
+        function deleteWord(index) {
+            if (confirm('确定要删除这个单词吗？')) {
+                wordLists[gameState.settings.wordList].splice(index, 1);
+                updateWordListDisplay();
+            }
+        }
+
+        // 文本文件导入功能
+        function importTXT(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const text = evt.target.result.trim();
+                const lines = text.split(/\r?\n/);
+                let startIdx = 0;
+                // 检查首行是否为表头
+                if (lines[0].includes('中文') && lines[0].includes('英文')) {
+                    startIdx = 1;
+                }
+                const newWords = [];
+                for (let i = startIdx; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+                    const parts = line.split(',');
+                    if (parts.length >= 2) {
+                        const prompt = parts[0].trim();
+                        const answer = parts[1].trim();
+                        if (prompt && /^[a-zA-Z]+$/.test(answer)) {
+                            newWords.push({ prompt, answer });
+                        }
+                    }
+                }
+                if (newWords.length === 0) {
+                    alert('没有有效的词条，请检查文本内容格式');
+                    return;
+                }
+                wordLists[gameState.settings.wordList] = newWords;
+                updateWordListDisplay();
+                alert(`成功导入 ${newWords.length} 个单词！`);
+            };
+            reader.readAsText(file, 'utf-8');
+        }
+
+        function exportWordList() {
+            const currentList = wordLists[gameState.settings.wordList];
+            if (!currentList || currentList.length === 0) {
+                alert('当前词库为空，无法导出');
+                return;
+            }
+
+            const blob = new Blob([JSON.stringify(currentList, null, 2)], 
+                { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `wordlist_${gameState.settings.wordList}_${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // 初始化游戏
+        initGame();
+    </script>
+</body>
+</html> 
