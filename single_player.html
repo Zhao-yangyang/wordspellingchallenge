@@ -922,6 +922,9 @@
             currentInput: ''
         };
 
+        // 防止快速点击标志
+        let isProcessingInput = false;
+
         // 基础词库数据
         const wordLists = {
             basic: [
@@ -1092,6 +1095,16 @@
                 document.getElementById('resultModal').style.display = 'none';
                 // 重置游戏状态
                 gameState.isPlaying = false;
+                
+                // 确保计时器停止
+                if (gameState.timer) {
+                    clearInterval(gameState.timer);
+                    gameState.timer = null;
+                }
+                
+                // 重置时间显示
+                document.getElementById('timer').textContent = '00:00';
+                
                 // 恢复初始界面状态
                 document.getElementById('prompt').textContent = '准备开始';
                 document.getElementById('wordDisplay').innerHTML = '';
@@ -1188,7 +1201,14 @@
 
         // 处理回车键
         function handleEnter() {
-            if (!gameState.isPlaying) return;
+            if (!gameState.isPlaying || isProcessingInput) return;
+
+            // 设置锁定标志防止重复点击
+            isProcessingInput = true;
+
+            // 确保隐藏任何可能存在的提示
+            const tip = document.getElementById('hintTip');
+            if (tip) tip.style.display = 'none';
 
             const currentWord = gameState.currentWordList[gameState.currentWordIndex];
             const inputs = document.querySelectorAll('.input-box');
@@ -1220,6 +1240,9 @@
                 } else {
                     endGame();
                 }
+                
+                // 解除锁定状态
+                isProcessingInput = false;
             }, 1500);
         }
 
@@ -1581,12 +1604,9 @@
                 
                 // 播放语音
                 window.speechSynthesis.speak(utterance);
-                
-                // 显示一个提示，但不显示单词
-                showHintTip(`🔊 正在播放发音...`);
             } else {
                 // 浏览器不支持语音合成API
-                showHintTip(`抱歉，您的浏览器不支持语音功能`);
+                alert('抱歉，您的浏览器不支持语音功能');
             }
         }
         

@@ -1403,6 +1403,17 @@
                 gameState.players.player1.isFinished = false;
                 gameState.players.player2.isFinished = false;
                 
+                // 停止并清除所有计时器
+                ['player1', 'player2'].forEach(p => {
+                    if (gameState.players[p].timer) {
+                        clearInterval(gameState.players[p].timer);
+                        gameState.players[p].timer = null;
+                    }
+                    
+                    // 重置时间显示
+                    document.getElementById(`${p}Timer`).textContent = '00:00';
+                });
+                
                 // 恢复初始界面状态
                 document.getElementById('player1Prompt').textContent = '准备开始';
                 document.getElementById('player1WordDisplay').innerHTML = '';
@@ -1556,9 +1567,22 @@
             }
         }
 
+        // 为防止快速点击添加锁定标志
+        let isProcessingInput = {
+            player1: false,
+            player2: false
+        };
+
         // 处理回车键
         function handleEnter(player) {
-            if (!gameState.isPlaying) return;
+            if (!gameState.isPlaying || isProcessingInput[player]) return;
+
+            // 设置锁定标志防止重复点击
+            isProcessingInput[player] = true;
+
+            // 确保隐藏任何可能存在的提示
+            const tip = document.getElementById(`${player}HintTip`);
+            if (tip) tip.style.display = 'none';
 
             const currentWord = gameState.currentWordList[gameState.players[player].currentWordIndex];
             const inputs = document.querySelectorAll(`#${player}WordDisplay .input-box`);
@@ -1606,6 +1630,9 @@
                 
                 // 检查游戏是否结束(两个玩家都完成)
                 checkGameEnd();
+                
+                // 解除锁定状态
+                isProcessingInput[player] = false;
             }, 1500);
         }
 
@@ -1903,12 +1930,9 @@
                 
                 // 播放语音
                 window.speechSynthesis.speak(utterance);
-                
-                // 显示一个提示，但不显示单词
-                showHintTip(player, `🔊 正在播放发音...`);
             } else {
                 // 浏览器不支持语音合成API
-                showHintTip(player, `抱歉，您的浏览器不支持语音功能`);
+                alert('抱歉，您的浏览器不支持语音功能');
             }
         }
 
