@@ -1001,10 +1001,6 @@
                 </div>
 
                 <div class="action-bar" id="player1ActionBar">
-                    <button class="action-btn btn-settings" id="player1SettingsBtn">
-                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 5 15.4a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 5 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 16 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19 8.6a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09A1.65 1.65 0 0 0 19 15.4z"/></svg>
-                      设置
-                    </button>
                     <button class="action-btn btn-wordlist" id="player1WordListBtn">
                       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4h16v16H4z"/></svg>
                       词库管理
@@ -1042,10 +1038,6 @@
                 </div>
 
                 <div class="action-bar" id="player2ActionBar">
-                    <button class="action-btn btn-settings" id="player2SettingsBtn">
-                      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 5 15.4a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 5 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 16 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19 8.6a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09A1.65 1.65 0 0 0 19 15.4z"/></svg>
-                      设置
-                    </button>
                     <button class="action-btn btn-wordlist" id="player2WordListBtn">
                       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4h16v16H4z"/></svg>
                       词库管理
@@ -1220,21 +1212,81 @@
                 { prompt: "苹果", answer: "apple" },
                 { prompt: "猫", answer: "cat" },
                 { prompt: "狗", answer: "dog" },
-                { prompt: "书", answer: "book" }
+                { prompt: "书", answer: "book" },
+                { prompt: "电脑", answer: "computer" },
+                { prompt: "手机", answer: "phone" },
+                { prompt: "学校", answer: "school" },
+                { prompt: "老师", answer: "teacher" },
+                { prompt: "学生", answer: "student" },
+                { prompt: "朋友", answer: "friend" },
+                { prompt: "家庭", answer: "family" },
+                { prompt: "父亲", answer: "father" },
+                { prompt: "母亲", answer: "mother" },
+                { prompt: "兄弟", answer: "brother" },
+                { prompt: "姐妹", answer: "sister" },
+                { prompt: "时间", answer: "time" },
+                { prompt: "水", answer: "water" },
+                { prompt: "食物", answer: "food" },
+                { prompt: "国家", answer: "country" },
+                { prompt: "城市", answer: "city" },
+                { prompt: "人", answer: "person" },
+                { prompt: "名字", answer: "name" },
+                { prompt: "工作", answer: "work" },
+                { prompt: "房子", answer: "house" }
             ],
             animals: [
                 { prompt: "老虎", answer: "tiger" },
                 { prompt: "狮子", answer: "lion" },
                 { prompt: "大象", answer: "elephant" },
                 { prompt: "长颈鹿", answer: "giraffe" },
-                { prompt: "熊猫", answer: "panda" }
+                { prompt: "熊猫", answer: "panda" },
+                { prompt: "猴子", answer: "monkey" },
+                { prompt: "兔子", answer: "rabbit" },
+                { prompt: "鸟", answer: "bird" },
+                { prompt: "鹦鹉", answer: "parrot" },
+                { prompt: "鱼", answer: "fish" },
+                { prompt: "鲨鱼", answer: "shark" },
+                { prompt: "海豚", answer: "dolphin" },
+                { prompt: "鲸鱼", answer: "whale" },
+                { prompt: "章鱼", answer: "octopus" },
+                { prompt: "青蛙", answer: "frog" },
+                { prompt: "蛇", answer: "snake" },
+                { prompt: "蜥蜴", answer: "lizard" },
+                { prompt: "乌龟", answer: "turtle" },
+                { prompt: "鳄鱼", answer: "crocodile" },
+                { prompt: "蝴蝶", answer: "butterfly" },
+                { prompt: "蜜蜂", answer: "bee" },
+                { prompt: "蚂蚁", answer: "ant" },
+                { prompt: "蜘蛛", answer: "spider" },
+                { prompt: "蝎子", answer: "scorpion" },
+                { prompt: "羊", answer: "sheep" }
             ],
             food: [
                 { prompt: "披萨", answer: "pizza" },
                 { prompt: "汉堡", answer: "hamburger" },
                 { prompt: "面条", answer: "noodle" },
                 { prompt: "米饭", answer: "rice" },
-                { prompt: "面包", answer: "bread" }
+                { prompt: "面包", answer: "bread" },
+                { prompt: "蛋糕", answer: "cake" },
+                { prompt: "巧克力", answer: "chocolate" },
+                { prompt: "冰淇淋", answer: "icecream" },
+                { prompt: "咖啡", answer: "coffee" },
+                { prompt: "茶", answer: "tea" },
+                { prompt: "牛奶", answer: "milk" },
+                { prompt: "果汁", answer: "juice" },
+                { prompt: "水果", answer: "fruit" },
+                { prompt: "蔬菜", answer: "vegetable" },
+                { prompt: "鸡肉", answer: "chicken" },
+                { prompt: "牛肉", answer: "beef" },
+                { prompt: "猪肉", answer: "pork" },
+                { prompt: "鱼肉", answer: "fish" },
+                { prompt: "虾", answer: "shrimp" },
+                { prompt: "蟹", answer: "crab" },
+                { prompt: "鸡蛋", answer: "egg" },
+                { prompt: "奶酪", answer: "cheese" },
+                { prompt: "沙拉", answer: "salad" },
+                { prompt: "酱汁", answer: "sauce" },
+                { prompt: "糖", answer: "sugar" }
             ]
         };
 
@@ -1474,11 +1526,15 @@
                 renderActionBars();
             };
 
-            // 玩家1按钮事件 - 这些按钮在游戏进行时由 renderActionBars 生成和绑定
-            // ... (注释掉的部分保持不变)
+            // 玩家1按钮事件
+            document.getElementById('player1HelpBtn').onclick = () => showHelp('player1');
+            document.getElementById('player1WordListBtn').onclick = () => showWordList('player1');
+            document.getElementById('player1StartBtn').onclick = () => startGame('player1');
 
-            // 玩家2按钮事件 - 这些按钮在游戏进行时由 renderActionBars 生成和绑定
-            // ... (注释掉的部分保持不变)
+            // 玩家2按钮事件
+            document.getElementById('player2HelpBtn').onclick = () => showHelp('player2');
+            document.getElementById('player2WordListBtn').onclick = () => showWordList('player2');
+            document.getElementById('player2StartBtn').onclick = () => startGame('player2');
 
             // 键盘事件监听
             document.addEventListener('keydown', handleKeyDown);
@@ -1849,11 +1905,40 @@
 
         // 保存设置
         function saveSettings() {
-            gameState.settings.wordCount = parseInt(document.getElementById('wordCount').value);
-            gameState.settings.timeLimit = parseInt(document.getElementById('timeLimit').value);
-            gameState.settings.wordList = document.getElementById('wordList').value;
+            const newWordCount = parseInt(document.getElementById('wordCount').value);
+            const newTimeLimit = parseInt(document.getElementById('timeLimit').value);
+            const newWordList = document.getElementById('wordList').value;
             
+            // 确保有效值
+            if (isNaN(newWordCount) || newWordCount < 5) {
+                alert('单词数量必须至少为5');
+                return;
+            }
+            
+            if (isNaN(newTimeLimit) || newTimeLimit < 0) {
+                alert('时间限制必须为非负数');
+                return;
+            }
+            
+            // 检查词库是否存在
+            if (!wordLists[newWordList] || wordLists[newWordList].length === 0) {
+                alert('所选词库为空，请先添加单词或选择其他词库');
+                return;
+            }
+            
+            // 保存之前的设置以便显示变化
+            const oldSettings = {...gameState.settings};
+            
+            // 应用设置
+            gameState.settings.wordCount = newWordCount;
+            gameState.settings.timeLimit = newTimeLimit;
+            gameState.settings.wordList = newWordList;
+            
+            // 保存到本地存储
             localStorage.setItem('gameSettings', JSON.stringify(gameState.settings));
+            
+            // 显示保存成功消息
+            alert('设置已保存！游戏将使用新设置。');
             hideSettings();
         }
 

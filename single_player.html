@@ -897,7 +897,7 @@
         <div class="modal-content" style="max-width: 450px; text-align: center;">
             <h2>🎉 游戏结束</h2>
             <div id="resultStats" style="font-size:1.1rem; color:#374151; margin-bottom:1.2rem;"></div>
-            <div id="resultWrongList" style="margin-bottom:1.2rem;"></div>
+            <div id="resultWrongList" style="margin-bottom:1.2rem; max-height: 200px; overflow-y: auto; padding: 0 10px;"></div>
             <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
                 <button class="action-btn btn-start" id="restartBtn">再来一局</button>
                 <button class="action-btn btn-help" id="closeResultBtn">关闭</button>
@@ -933,21 +933,81 @@
                 { prompt: "苹果", answer: "apple" },
                 { prompt: "猫", answer: "cat" },
                 { prompt: "狗", answer: "dog" },
-                { prompt: "书", answer: "book" }
+                { prompt: "书", answer: "book" },
+                { prompt: "电脑", answer: "computer" },
+                { prompt: "手机", answer: "phone" },
+                { prompt: "学校", answer: "school" },
+                { prompt: "老师", answer: "teacher" },
+                { prompt: "学生", answer: "student" },
+                { prompt: "朋友", answer: "friend" },
+                { prompt: "家庭", answer: "family" },
+                { prompt: "父亲", answer: "father" },
+                { prompt: "母亲", answer: "mother" },
+                { prompt: "兄弟", answer: "brother" },
+                { prompt: "姐妹", answer: "sister" },
+                { prompt: "时间", answer: "time" },
+                { prompt: "水", answer: "water" },
+                { prompt: "食物", answer: "food" },
+                { prompt: "国家", answer: "country" },
+                { prompt: "城市", answer: "city" },
+                { prompt: "人", answer: "person" },
+                { prompt: "名字", answer: "name" },
+                { prompt: "工作", answer: "work" },
+                { prompt: "房子", answer: "house" }
             ],
             animals: [
                 { prompt: "老虎", answer: "tiger" },
                 { prompt: "狮子", answer: "lion" },
                 { prompt: "大象", answer: "elephant" },
                 { prompt: "长颈鹿", answer: "giraffe" },
-                { prompt: "熊猫", answer: "panda" }
+                { prompt: "熊猫", answer: "panda" },
+                { prompt: "猴子", answer: "monkey" },
+                { prompt: "兔子", answer: "rabbit" },
+                { prompt: "鸟", answer: "bird" },
+                { prompt: "鹦鹉", answer: "parrot" },
+                { prompt: "鱼", answer: "fish" },
+                { prompt: "鲨鱼", answer: "shark" },
+                { prompt: "海豚", answer: "dolphin" },
+                { prompt: "鲸鱼", answer: "whale" },
+                { prompt: "章鱼", answer: "octopus" },
+                { prompt: "青蛙", answer: "frog" },
+                { prompt: "蛇", answer: "snake" },
+                { prompt: "蜥蜴", answer: "lizard" },
+                { prompt: "乌龟", answer: "turtle" },
+                { prompt: "鳄鱼", answer: "crocodile" },
+                { prompt: "蝴蝶", answer: "butterfly" },
+                { prompt: "蜜蜂", answer: "bee" },
+                { prompt: "蚂蚁", answer: "ant" },
+                { prompt: "蜘蛛", answer: "spider" },
+                { prompt: "蝎子", answer: "scorpion" },
+                { prompt: "羊", answer: "sheep" }
             ],
             food: [
                 { prompt: "披萨", answer: "pizza" },
                 { prompt: "汉堡", answer: "hamburger" },
                 { prompt: "面条", answer: "noodle" },
                 { prompt: "米饭", answer: "rice" },
-                { prompt: "面包", answer: "bread" }
+                { prompt: "面包", answer: "bread" },
+                { prompt: "蛋糕", answer: "cake" },
+                { prompt: "巧克力", answer: "chocolate" },
+                { prompt: "冰淇淋", answer: "icecream" },
+                { prompt: "咖啡", answer: "coffee" },
+                { prompt: "茶", answer: "tea" },
+                { prompt: "牛奶", answer: "milk" },
+                { prompt: "果汁", answer: "juice" },
+                { prompt: "水果", answer: "fruit" },
+                { prompt: "蔬菜", answer: "vegetable" },
+                { prompt: "鸡肉", answer: "chicken" },
+                { prompt: "牛肉", answer: "beef" },
+                { prompt: "猪肉", answer: "pork" },
+                { prompt: "鱼肉", answer: "fish" },
+                { prompt: "虾", answer: "shrimp" },
+                { prompt: "蟹", answer: "crab" },
+                { prompt: "鸡蛋", answer: "egg" },
+                { prompt: "奶酪", answer: "cheese" },
+                { prompt: "沙拉", answer: "salad" },
+                { prompt: "酱汁", answer: "sauce" },
+                { prompt: "糖", answer: "sugar" }
             ]
         };
 
@@ -1315,13 +1375,26 @@
             // 结果统计内容
             document.getElementById('resultStats').innerHTML =
                 `正确数：<b>${correct}</b> / ${total}<br>正确率：<b>${accuracy}%</b><br>用时：<b>${timeString}</b>`;
+            
             // 错词列表
+            const resultWrongList = document.getElementById('resultWrongList');
             if (wrongList.length > 0) {
-                document.getElementById('resultWrongList').innerHTML =
-                    `<div style='color:#B91C1C;font-weight:600;margin-bottom:0.3rem;'>错误单词：</div>` +
-                    wrongList.map(w => `<div>${w.prompt} → <span style='color:#2563EB'>${w.answer}</span></div>`).join('');
+                let wrongListHtml = `<div style='color:#B91C1C;font-weight:600;margin-bottom:0.3rem;'>错误单词：</div>`;
+                
+                // 为错词列表添加样式
+                wrongListHtml += `<div style="max-height: 180px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; text-align: left;">`;
+                
+                // 添加错词列表内容
+                wrongListHtml += wrongList.map(w => 
+                    `<div style="padding: 6px; border-bottom: 1px solid #f3f4f6;">
+                        ${w.prompt} → <span style='color:#2563EB'>${w.answer}</span>
+                    </div>`
+                ).join('');
+                
+                wrongListHtml += `</div>`;
+                resultWrongList.innerHTML = wrongListHtml;
             } else {
-                document.getElementById('resultWrongList').innerHTML =
+                resultWrongList.innerHTML =
                     `<div style='color:#059669;font-weight:600;'>全部答对，太棒了！</div>`;
             }
             document.getElementById('resultModal').style.display = 'flex';
@@ -1340,11 +1413,40 @@
 
         // 保存设置
         function saveSettings() {
-            gameState.settings.wordCount = parseInt(document.getElementById('wordCount').value);
-            gameState.settings.timeLimit = parseInt(document.getElementById('timeLimit').value);
-            gameState.settings.wordList = document.getElementById('wordList').value;
+            const newWordCount = parseInt(document.getElementById('wordCount').value);
+            const newTimeLimit = parseInt(document.getElementById('timeLimit').value);
+            const newWordList = document.getElementById('wordList').value;
             
+            // 确保有效值
+            if (isNaN(newWordCount) || newWordCount < 5) {
+                alert('单词数量必须至少为5');
+                return;
+            }
+            
+            if (isNaN(newTimeLimit) || newTimeLimit < 0) {
+                alert('时间限制必须为非负数');
+                return;
+            }
+            
+            // 检查词库是否存在
+            if (!wordLists[newWordList] || wordLists[newWordList].length === 0) {
+                alert('所选词库为空，请先添加单词或选择其他词库');
+                return;
+            }
+            
+            // 保存之前的设置以便显示变化
+            const oldSettings = {...gameState.settings};
+            
+            // 应用设置
+            gameState.settings.wordCount = newWordCount;
+            gameState.settings.timeLimit = newTimeLimit;
+            gameState.settings.wordList = newWordList;
+            
+            // 保存到本地存储
             localStorage.setItem('gameSettings', JSON.stringify(gameState.settings));
+            
+            // 显示保存成功消息
+            alert('设置已保存！游戏将使用新设置。');
             hideSettings();
         }
 
