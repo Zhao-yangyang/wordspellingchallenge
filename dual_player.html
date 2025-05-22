@@ -556,12 +556,60 @@
             background: #F9FAFB;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
+            position: relative; /* 添加相对定位以支持胜利标志 */
         }
 
         .player-result.winner {
             background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
             border: 2px solid #34D399;
-            transform: scale(1.03);
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(52, 211, 153, 0.2);
+        }
+
+        /* 添加胜利标志样式 */
+        .winner-badge {
+            display: none;
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: #047857;
+            color: white;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transform: rotate(12deg);
+            font-size: 1.1rem;
+            z-index: 2;
+        }
+
+        .player-result.winner .winner-badge {
+            display: block;
+            animation: bounce 1s ease infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: rotate(12deg) scale(1); }
+            to { transform: rotate(15deg) scale(1.1); }
+        }
+
+        /* 添加金色皇冠图标 */
+        .crown-icon {
+            display: none;
+            vertical-align: middle;
+            margin-right: 8px;
+            color: gold;
+            animation: shine 1.5s ease infinite;
+        }
+
+        .player-result.winner .crown-icon {
+            display: inline-block;
+        }
+
+        @keyframes shine {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
         }
 
         .player-result h3 {
@@ -1074,12 +1122,14 @@
             <h2 class="result-header">🎉 游戏结束</h2>
             <div class="result-stats">
                 <div class="player-result" id="player1Result">
-                    <h3>玩家1</h3>
+                    <div class="winner-badge">获胜!</div>
+                    <h3><span class="crown-icon">👑</span> 玩家1</h3>
                     <p>正确数：<span class="highlight" id="player1ResultCorrect">0</span></p>
                     <p>用时：<span class="highlight" id="player1ResultTime">00:00</span></p>
                 </div>
                 <div class="player-result" id="player2Result">
-                    <h3>玩家2</h3>
+                    <div class="winner-badge">获胜!</div>
+                    <h3><span class="crown-icon">👑</span> 玩家2</h3>
                     <p>正确数：<span class="highlight" id="player2ResultCorrect">0</span></p>
                     <p>用时：<span class="highlight" id="player2ResultTime">00:00</span></p>
                 </div>
@@ -1698,12 +1748,14 @@
             const player1Correct = gameState.players.player1.correctCount;
             const player2Correct = gameState.players.player2.correctCount;
             
+            // 先重置两个玩家的样式
+            document.getElementById('player1Result').classList.remove('winner');
+            document.getElementById('player2Result').classList.remove('winner');
+            
             if (player1Correct > player2Correct) {
                 document.getElementById('player1Result').classList.add('winner');
-                document.getElementById('player2Result').classList.remove('winner');
             } else if (player2Correct > player1Correct) {
                 document.getElementById('player2Result').classList.add('winner');
-                document.getElementById('player1Result').classList.remove('winner');
             } else {
                 // 如果正确数相同，比较用时
                 const player1Time = gameState.players.player1.endTime - gameState.players.player1.startTime;
@@ -1711,10 +1763,8 @@
                 
                 if (player1Time < player2Time) {
                     document.getElementById('player1Result').classList.add('winner');
-                    document.getElementById('player2Result').classList.remove('winner');
                 } else if (player2Time < player1Time) {
                     document.getElementById('player2Result').classList.add('winner');
-                    document.getElementById('player1Result').classList.remove('winner');
                 } else {
                     // 如果用时也相同，则平局
                     document.getElementById('player1Result').classList.add('winner');

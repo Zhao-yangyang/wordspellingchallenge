@@ -919,7 +919,8 @@
                 timeLimit: 0,
                 wordList: 'basic'
             },
-            currentInput: ''
+            currentInput: '',
+            correctWords: [] // 添加记录正确单词的数组
         };
 
         // 防止快速点击标志
@@ -1123,6 +1124,7 @@
             gameState.correctCount = 0;
             gameState.startTime = Date.now();
             gameState.currentInput = '';
+            gameState.correctWords = []; // 重置正确单词记录
             
             // 获取当前词库
             const currentList = wordLists[gameState.settings.wordList];
@@ -1215,6 +1217,8 @@
 
             if (gameState.currentInput.toLowerCase() === currentWord.answer.toLowerCase()) {
                 gameState.correctCount++;
+                // 记录当前单词已正确回答
+                gameState.correctWords[gameState.currentWordIndex] = true;
                 // 显示正确反馈
                 inputs.forEach(input => {
                     input.style.backgroundColor = '#86EFAC';
@@ -1303,7 +1307,7 @@
             let wrongList = [];
             for (let i = 0; i < total; i++) {
                 const word = gameState.currentWordList[i];
-                if (!gameState.correctWords || !gameState.correctWords[i]) {
+                if (!gameState.correctWords[i]) {
                     if (!wrongList.includes(word)) wrongList.push(word);
                 }
             }
