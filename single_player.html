@@ -35,7 +35,7 @@
 
         .navbar-content {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             max-width: 1200px;
             margin: 0 auto;
@@ -1101,13 +1101,13 @@
             // QWERTY三行布局，确认和删除按钮在各自行最右侧
             const rows = [
                 [
-                    {key:'Q', color:'key-red'},{key:'W', color:'key-green'},{key:'E', color:'key-blue'},{key:'R', color:'key-yellow'},{key:'T', color:'key-orange'},{key:'Y', color:'key-purple'},{key:'U', color:'key-pink'},{key:'I', color:'key-green'},{key:'O', color:'key-red'},{key:'P', color:'key-blue'}
+                    {key:'q', color:'key-red'},{key:'w', color:'key-green'},{key:'e', color:'key-blue'},{key:'r', color:'key-yellow'},{key:'t', color:'key-orange'},{key:'y', color:'key-purple'},{key:'u', color:'key-pink'},{key:'i', color:'key-green'},{key:'o', color:'key-red'},{key:'p', color:'key-blue'}
                 ],
                 [
-                    {key:'A', color:'key-pink'},{key:'S', color:'key-green'},{key:'D', color:'key-blue'},{key:'F', color:'key-yellow'},{key:'G', color:'key-orange'},{key:'H', color:'key-purple'},{key:'J', color:'key-pink'},{key:'K', color:'key-green'},{key:'L', color:'key-blue'},{key:'↵', enter:true}
+                    {key:'a', color:'key-pink'},{key:'s', color:'key-green'},{key:'d', color:'key-blue'},{key:'f', color:'key-yellow'},{key:'g', color:'key-orange'},{key:'h', color:'key-purple'},{key:'j', color:'key-pink'},{key:'k', color:'key-green'},{key:'l', color:'key-blue'},{key:'↵', enter:true}
                 ],
                 [
-                    {key:'Z', color:'key-green'},{key:'X', color:'key-blue'},{key:'C', color:'key-yellow'},{key:'V', color:'key-orange'},{key:'B', color:'key-blue'},{key:'N', color:'key-pink'},{key:'M', color:'key-green'},{key:'⌫', del:true}
+                    {key:'z', color:'key-green'},{key:'x', color:'key-blue'},{key:'c', color:'key-yellow'},{key:'v', color:'key-orange'},{key:'b', color:'key-blue'},{key:'n', color:'key-pink'},{key:'m', color:'key-green'},{key:'⌫', del:true}
                 ]
             ];
             rows.forEach((row) => {
@@ -1289,7 +1289,7 @@
                     input.style.backgroundColor = '#FCA5A5';
                 });
                 // 显示正确答案
-                const correctAnswer = currentWord.answer.toUpperCase();
+                const correctAnswer = currentWord.answer.toLowerCase();
                 for (let i = 0; i < correctAnswer.length; i++) {
                     inputs[i].textContent = correctAnswer[i];
                 }
@@ -1319,7 +1319,7 @@
             } else if (event.key === 'Backspace') {
                 handleBackspace();
             } else if (/^[a-zA-Z]$/.test(event.key)) {
-                handleKeyPress(event.key.toUpperCase());
+                handleKeyPress(event.key.toLowerCase());
             }
         }
 
@@ -1683,7 +1683,7 @@
         function showHint() {
             if (!gameState.isPlaying) return;
             const currentWord = gameState.currentWordList[gameState.currentWordIndex];
-            const answer = currentWord.answer.toUpperCase();
+            const answer = currentWord.answer.toLowerCase();
             showHintTip(`提示：<b>${answer}</b>`);
         }
         
