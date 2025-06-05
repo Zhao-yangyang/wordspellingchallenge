@@ -846,10 +846,6 @@
                 </div>
                 <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
                     <button class="btn btn-secondary" id="closeWordList">关闭</button>
-                    <button class="btn btn-primary" id="saveWordList">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                        导出词库
-                    </button>
                 </div>
             </div>
         </div>
@@ -1031,12 +1027,18 @@
             document.getElementById('closeWordList').onclick = hideWordList;
             document.getElementById('addWordBtn').onclick = addWord;
             document.getElementById('importTXT').onchange = importTXT;
-            document.getElementById('saveWordList').onclick = exportWordList;
             document.getElementById('restartBtn').onclick = restartGame;
             document.getElementById('closeResultBtn').onclick = () => {
                 document.getElementById('resultModal').style.display = 'none';
-                // 重置游戏状态
+                
+                // 完全重置游戏状态
                 gameState.isPlaying = false;
+                gameState.currentWordIndex = 0;
+                gameState.correctCount = 0;
+                gameState.startTime = null;
+                gameState.currentInput = '';
+                gameState.correctWords = [];
+                gameState.currentWordList = [];
                 
                 // 确保计时器停止
                 if (gameState.timer) {
@@ -1044,12 +1046,18 @@
                     gameState.timer = null;
                 }
                 
-                // 重置时间显示
-                document.getElementById('timer').textContent = '00:00';
-                
-                // 恢复初始界面状态
+                // 重置UI显示
                 document.getElementById('prompt').textContent = '准备开始';
                 document.getElementById('wordDisplay').innerHTML = '';
+                document.getElementById('correctCount').textContent = '0';
+                document.getElementById('currentWord').textContent = '0';
+                document.getElementById('totalWords').textContent = '0';
+                document.getElementById('timer').textContent = '00:00';
+                
+                // 隐藏提示
+                const tip = document.getElementById('hintTip');
+                if (tip) tip.style.display = 'none';
+                
                 // 重新渲染操作栏
                 renderActionBar();
             };
@@ -1448,10 +1456,8 @@
         }
 
         function deleteWord(index) {
-            if (confirm('确定要删除这个单词吗？')) {
-                wordLists[gameState.settings.wordList].splice(index, 1);
-                updateWordListDisplay();
-            }
+            wordLists[gameState.settings.wordList].splice(index, 1);
+            updateWordListDisplay();
         }
 
         // 文本文件导入功能
@@ -1489,25 +1495,6 @@
                 alert(`成功导入 ${newWords.length} 个单词！`);
             };
             reader.readAsText(file, 'utf-8');
-        }
-
-        function exportWordList() {
-            const currentList = wordLists[gameState.settings.wordList];
-            if (!currentList || currentList.length === 0) {
-                alert('当前词库为空，无法导出');
-                return;
-            }
-
-            const blob = new Blob([JSON.stringify(currentList, null, 2)], 
-                { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `wordlist_${gameState.settings.wordList}_${new Date().toISOString().slice(0,10)}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
         }
 
         // 重新开始游戏
@@ -1574,37 +1561,35 @@
 
         // 重置游戏函数
         function resetGame() {
-            if (confirm('确定要重置游戏吗？当前进度将丢失。')) {
-                // 停止计时器
-                if (gameState.timer) {
-                    clearInterval(gameState.timer);
-                    gameState.timer = null;
-                }
-                
-                // 重置游戏状态
-                gameState.isPlaying = false;
-                gameState.currentWordIndex = 0;
-                gameState.correctCount = 0;
-                gameState.startTime = null;
-                gameState.currentInput = '';
-                gameState.correctWords = [];
-                gameState.currentWordList = [];
-                
-                // 重置界面显示
-                document.getElementById('prompt').textContent = '准备开始';
-                document.getElementById('wordDisplay').innerHTML = '';
-                document.getElementById('correctCount').textContent = '0';
-                document.getElementById('currentWord').textContent = '0';
-                document.getElementById('totalWords').textContent = '0';
-                document.getElementById('timer').textContent = '00:00';
-                
-                // 隐藏提示
-                const tip = document.getElementById('hintTip');
-                if (tip) tip.style.display = 'none';
-                
-                // 重新渲染操作栏
-                renderActionBar();
+            // 停止计时器
+            if (gameState.timer) {
+                clearInterval(gameState.timer);
+                gameState.timer = null;
             }
+            
+            // 完全重置游戏状态
+            gameState.isPlaying = false;
+            gameState.currentWordIndex = 0;
+            gameState.correctCount = 0;
+            gameState.startTime = null;
+            gameState.currentInput = '';
+            gameState.correctWords = [];
+            gameState.currentWordList = [];
+            
+            // 重置界面显示
+            document.getElementById('prompt').textContent = '准备开始';
+            document.getElementById('wordDisplay').innerHTML = '';
+            document.getElementById('correctCount').textContent = '0';
+            document.getElementById('currentWord').textContent = '0';
+            document.getElementById('totalWords').textContent = '0';
+            document.getElementById('timer').textContent = '00:00';
+            
+            // 隐藏提示
+            const tip = document.getElementById('hintTip');
+            if (tip) tip.style.display = 'none';
+            
+            // 重新渲染操作栏
+            renderActionBar();
         }
 
         // 游戏流程相关操作函数

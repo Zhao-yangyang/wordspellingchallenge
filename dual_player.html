@@ -1156,10 +1156,6 @@
                 </div>
                 <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
                     <button class="btn btn-secondary" id="closeWordList">关闭</button>
-                    <button class="btn btn-primary" id="saveWordList">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                        导出词库
-                    </button>
                 </div>
             </div>
         </div>
@@ -1296,10 +1292,6 @@
             
             // 初始隐藏重置按钮
             document.getElementById('globalResetBtn').style.display = 'none';
-            
-            // 添加键盘大小自适应
-            optimizeKeyboardSize();
-            window.addEventListener('resize', optimizeKeyboardSize);
         }
 
 
@@ -1359,19 +1351,20 @@
             document.getElementById('closeWordList').onclick = () => hideWordList();
             document.getElementById('addWordBtn').onclick = addWord;
             document.getElementById('importTXT').onchange = importTXT;
-            document.getElementById('saveWordList').onclick = exportWordList;
             document.getElementById('restartBtn').onclick = restartGame;
-                    document.getElementById('globalStartGameBtn').onclick = () => startGame();
-        document.getElementById('globalResetBtn').onclick = () => resetGame();
-        document.getElementById('closeResultBtn').onclick = () => {
+            document.getElementById('globalStartGameBtn').onclick = () => startGame();
+            document.getElementById('globalResetBtn').onclick = () => resetGame();
+            document.getElementById('closeResultBtn').onclick = () => {
                 document.getElementById('resultModal').style.display = 'none';
+                
+                // 重置结果弹窗标题
+                document.querySelector('.result-header').textContent = '🎉 游戏结束';
+                
                 // 重置游戏状态
                 gameState.isPlaying = false;
                 gameState.players.player1.isFinished = false;
                 gameState.players.player2.isFinished = false;
-                
-                // 隐藏重置按钮
-                document.getElementById('globalResetBtn').style.display = 'none';
+                gameState.currentWordList = [];
                 
                 // 停止并清除所有计时器
                 ['player1', 'player2'].forEach(p => {
@@ -1380,15 +1373,26 @@
                         gameState.players[p].timer = null;
                     }
                     
-                    // 重置时间显示
+                    // 完全重置玩家状态
+                    gameState.players[p].currentWordIndex = 0;
+                    gameState.players[p].correctCount = 0;
+                    gameState.players[p].startTime = null;
+                    gameState.players[p].endTime = null;
+                    gameState.players[p].currentInput = '';
+                    gameState.players[p].correctWords = [];
+                    
+                    // 重置UI显示
+                    document.getElementById(`${p}Prompt`).textContent = '准备开始';
+                    document.getElementById(`${p}WordDisplay`).innerHTML = '';
+                    document.getElementById(`${p}CorrectCount`).textContent = '0';
+                    document.getElementById(`${p}CurrentWord`).textContent = '0';
+                    document.getElementById(`${p}TotalWords`).textContent = '0';
                     document.getElementById(`${p}Timer`).textContent = '00:00';
                 });
                 
-                // 恢复初始界面状态
-                document.getElementById('player1Prompt').textContent = '准备开始';
-                document.getElementById('player1WordDisplay').innerHTML = '';
-                document.getElementById('player2Prompt').textContent = '准备开始';
-                document.getElementById('player2WordDisplay').innerHTML = '';
+                // 显示开始游戏按钮，隐藏重置按钮
+                document.getElementById('globalStartGameBtn').style.display = 'inline-flex';
+                document.getElementById('globalResetBtn').style.display = 'none';
                 
                 // 重新渲染操作栏
                 renderActionBars();
@@ -1423,12 +1427,17 @@
                 // 重置UI
                 document.getElementById(`${p}Prompt`).textContent = "准备开始";
                 document.getElementById(`${p}WordDisplay`).innerHTML = "";
+                document.getElementById(`${p}CorrectCount`).textContent = '0';
+                document.getElementById(`${p}CurrentWord`).textContent = '0';
+                document.getElementById(`${p}TotalWords`).textContent = '0';
+                document.getElementById(`${p}Timer`).textContent = '00:00';
             });
             
             // 设置游戏状态为进行中
             gameState.isPlaying = true;
             
-            // 显示重置按钮
+            // 隐藏开始游戏按钮，显示重置按钮
+            document.getElementById('globalStartGameBtn').style.display = 'none';
             document.getElementById('globalResetBtn').style.display = 'inline-flex';
             
             if (player) {
@@ -1689,9 +1698,10 @@
                 } else if (player2Time < player1Time) {
                     document.getElementById('player2Result').classList.add('winner');
                 } else {
-                    // 如果用时也相同，则平局
-                    document.getElementById('player1Result').classList.add('winner');
-                    document.getElementById('player2Result').classList.add('winner');
+                    // 平局：正确数和用时都相同
+                    // 不添加winner类，表示平局
+                    // 可以考虑添加特殊的平局样式或文本提示
+                    document.querySelector('.result-header').textContent = '🤝 平局！';
                 }
             }
 
@@ -1891,49 +1901,48 @@
 
         // 全局重置游戏函数
         function resetGame() {
-            if (confirm('确定要重置整个游戏吗？两个玩家的进度都将丢失。')) {
-                // 停止所有计时器
-                ['player1', 'player2'].forEach(p => {
-                    if (gameState.players[p].timer) {
-                        clearInterval(gameState.players[p].timer);
-                        gameState.players[p].timer = null;
-                    }
-                });
+            // 停止所有计时器
+            ['player1', 'player2'].forEach(p => {
+                if (gameState.players[p].timer) {
+                    clearInterval(gameState.players[p].timer);
+                    gameState.players[p].timer = null;
+                }
+            });
+            
+            // 重置游戏状态
+            gameState.isPlaying = false;
+            
+            // 显示开始游戏按钮，隐藏重置按钮
+            document.getElementById('globalStartGameBtn').style.display = 'inline-flex';
+            document.getElementById('globalResetBtn').style.display = 'none';
+            
+            ['player1', 'player2'].forEach(p => {
+                gameState.players[p].currentWordIndex = 0;
+                gameState.players[p].correctCount = 0;
+                gameState.players[p].startTime = null;
+                gameState.players[p].endTime = null;
+                gameState.players[p].isFinished = false;
+                gameState.players[p].currentInput = '';
+                gameState.players[p].correctWords = [];
                 
-                // 重置游戏状态
-                gameState.isPlaying = false;
+                // 重置界面显示
+                document.getElementById(`${p}Prompt`).textContent = '准备开始';
+                document.getElementById(`${p}WordDisplay`).innerHTML = '';
+                document.getElementById(`${p}CorrectCount`).textContent = '0';
+                document.getElementById(`${p}CurrentWord`).textContent = '0';
+                document.getElementById(`${p}TotalWords`).textContent = '0';
+                document.getElementById(`${p}Timer`).textContent = '00:00';
                 
-                // 隐藏重置按钮
-                document.getElementById('globalResetBtn').style.display = 'none';
-                
-                ['player1', 'player2'].forEach(p => {
-                    gameState.players[p].currentWordIndex = 0;
-                    gameState.players[p].correctCount = 0;
-                    gameState.players[p].startTime = null;
-                    gameState.players[p].endTime = null;
-                    gameState.players[p].isFinished = false;
-                    gameState.players[p].currentInput = '';
-                    gameState.players[p].correctWords = [];
-                    
-                    // 重置界面显示
-                    document.getElementById(`${p}Prompt`).textContent = '准备开始';
-                    document.getElementById(`${p}WordDisplay`).innerHTML = '';
-                    document.getElementById(`${p}CorrectCount`).textContent = '0';
-                    document.getElementById(`${p}CurrentWord`).textContent = '0';
-                    document.getElementById(`${p}TotalWords`).textContent = '0';
-                    document.getElementById(`${p}Timer`).textContent = '00:00';
-                    
-                    // 隐藏提示
-                    const tip = document.getElementById(`${p}HintTip`);
-                    if (tip) tip.style.display = 'none';
-                });
-                
-                // 重置词库
-                gameState.currentWordList = [];
-                
-                // 重新渲染操作栏
-                renderActionBars();
-            }
+                // 隐藏提示
+                const tip = document.getElementById(`${p}HintTip`);
+                if (tip) tip.style.display = 'none';
+            });
+            
+            // 重置词库
+            gameState.currentWordList = [];
+            
+            // 重新渲染操作栏
+            renderActionBars();
         }
 
         // 游戏流程相关操作函数
@@ -2086,10 +2095,8 @@
         }
 
         function deleteWord(index) {
-            if (confirm('确定要删除这个单词吗？')) {
-                wordLists[gameState.settings.wordList].splice(index, 1);
-                updateWordListDisplay();
-            }
+            wordLists[gameState.settings.wordList].splice(index, 1);
+            updateWordListDisplay();
         }
 
         // 文本文件导入功能
@@ -2127,25 +2134,6 @@
                 alert(`成功导入 ${newWords.length} 个单词！`);
             };
             reader.readAsText(file, 'utf-8');
-        }
-
-        function exportWordList() {
-            const currentList = wordLists[gameState.settings.wordList];
-            if (!currentList || currentList.length === 0) {
-                alert('当前词库为空，无法导出');
-                return;
-            }
-
-            const blob = new Blob([JSON.stringify(currentList, null, 2)], 
-                { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `wordlist_${gameState.settings.wordList}_${new Date().toISOString().slice(0,10)}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
         }
 
         // 初始化游戏
