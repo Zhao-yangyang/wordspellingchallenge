@@ -1382,6 +1382,13 @@
 
         // 开始游戏
         function startGame(player) {
+            // 首先检查词库是否为空
+            const currentList = wordLists.custom;
+            if (!currentList || currentList.length === 0) {
+                alert('当前词库为空，请先添加单词！');
+                return;
+            }
+            
             // 取消所有正在进行的延时操作
             ['player1', 'player2'].forEach(p => {
                 if (processingTimeout[p]) {
@@ -1422,13 +1429,6 @@
             
             if (player) {
                 // 单个玩家开始游戏
-                // 获取当前词库
-                const currentList = wordLists.custom;
-                if (!currentList || currentList.length === 0) {
-                    alert('当前词库为空，请先添加单词！');
-                    return;
-                }
-                
                 // 使用所有可用单词
                 gameState.currentWordList = shuffleArray([...currentList]);
 
@@ -1440,13 +1440,6 @@
                 startTimer(player);
             } else {
                 // 两个玩家同时开始游戏                
-                // 获取当前词库
-                const currentList = wordLists.custom;
-                if (!currentList || currentList.length === 0) {
-                    alert('当前词库为空，请先添加单词！');
-                    return;
-                }
-                
                 // 使用所有可用单词
                 gameState.currentWordList = shuffleArray([...currentList]);
 

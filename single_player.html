@@ -177,6 +177,12 @@
         .key-purple { background: #C7D2FE; color: #3730A3; }
         .key-orange { background: #FDBA74; color: #B45309; }
         .key-cyan { background: #6EE7B7; color: #065F46; }
+        /* 空格键在小屏幕上的特殊样式 */
+        .keyboard-key[style*="min-width: 6rem"] {
+            min-width: 40% !important;
+            width: 40% !important;
+        }
+
         .keyboard-key:active, .keyboard-key:focus {
             outline: 2px solid #3B82F6;
             outline-offset: 2px;
