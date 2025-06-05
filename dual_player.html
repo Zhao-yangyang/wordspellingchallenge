@@ -1292,11 +1292,7 @@
 
         // 初始化游戏
         function initGame() {
-            // 加载设置
-            const savedSettings = localStorage.getItem('gameSettings');
-            if (savedSettings) {
-                gameState.settings = JSON.parse(savedSettings);
-            }
+            // 不再从本地存储加载设置，使用默认设置
 
             // 初始化界面
             updateSettingsUI();
@@ -1418,7 +1414,7 @@
                 const keyboard = document.getElementById(`${player}Keyboard`);
                 keyboard.innerHTML = '';
                 
-                // 使用更紧凑的QWERTY键盘布局
+                // 标准QWERTY键盘布局
                 const rows = [
                     [
                         {key:'q', color:'key-red'},{key:'w', color:'key-green'},{key:'e', color:'key-blue'},
@@ -1426,14 +1422,14 @@
                         {key:'u', color:'key-pink'},{key:'i', color:'key-green'},{key:'o', color:'key-red'},{key:'p', color:'key-blue'}
                     ],
                     [
-                        {key:'a', color:'key-pink'},{key:'s', color:'key-green'},{key:'d', color:'key-blue'},
+                        {key:'', blank:true},{key:'a', color:'key-pink'},{key:'s', color:'key-green'},{key:'d', color:'key-blue'},
                         {key:'f', color:'key-yellow'},{key:'g', color:'key-orange'},{key:'h', color:'key-purple'},
                         {key:'j', color:'key-pink'},{key:'k', color:'key-green'},{key:'l', color:'key-blue'},{key:'↵', enter:true}
                     ],
                     [
-                        {key:'z', color:'key-green'},{key:'x', color:'key-blue'},{key:'c', color:'key-yellow'},
+                        {key:'', blank:true},{key:'', blank:true},{key:'z', color:'key-green'},{key:'x', color:'key-blue'},{key:'c', color:'key-yellow'},
                         {key:'v', color:'key-orange'},{key:'b', color:'key-blue'},{key:'n', color:'key-pink'},
-                        {key:'m', color:'key-green'},{key:'⌫', del:true}
+                        {key:'m', color:'key-green'},{key:'', blank:true},{key:'⌫', del:true}
                     ]
                 ];
 
@@ -1455,7 +1451,11 @@
                     }
                     
                     row.forEach((item) => {
-                        if (item.enter) {
+                        if (item.blank) {
+                            const blankKey = document.createElement('div');
+                            blankKey.className = 'keyboard-key blank';
+                            rowDiv.appendChild(blankKey);
+                        } else if (item.enter) {
                             const enterKey = document.createElement('button');
                             enterKey.className = 'keyboard-key enter';
                             enterKey.textContent = '↵';
@@ -1577,10 +1577,8 @@
                 updateGameInfo(player);
                 showNextWord(player);
 
-                // 开始计时
-                if (gameState.settings.timeLimit > 0) {
-                    startTimer(player);
-                }
+                // 开始计时（无论是否有时间限制都要计时）
+                startTimer(player);
             } else {
                 // 两个玩家同时开始游戏                
                 // 获取当前词库
@@ -1600,12 +1598,10 @@
                     showNextWord(p);
                 });
 
-                // 开始计时
-                if (gameState.settings.timeLimit > 0) {
-                    ['player1', 'player2'].forEach(p => {
-                        startTimer(p);
-                    });
-                }
+                // 开始计时（无论是否有时间限制都要计时）
+                ['player1', 'player2'].forEach(p => {
+                    startTimer(p);
+                });
             }
             renderActionBars();
         }
@@ -1866,17 +1862,27 @@
             
             gameState.players[player].timer = setInterval(() => {
                 const elapsed = Math.floor((Date.now() - gameState.players[player].startTime) / 1000);
-                const remaining = gameState.settings.timeLimit - elapsed;
                 
-                if (remaining <= 0) {
-                    endGame();
-                    return;
-                }
+                if (gameState.settings.timeLimit > 0) {
+                    // 倒计时模式
+                    const remaining = gameState.settings.timeLimit - elapsed;
+                    
+                    if (remaining <= 0) {
+                        endGame();
+                        return;
+                    }
 
-                const minutes = Math.floor(remaining / 60);
-                const seconds = remaining % 60;
-                document.getElementById(`${player}Timer`).textContent = 
-                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    const minutes = Math.floor(remaining / 60);
+                    const seconds = remaining % 60;
+                    document.getElementById(`${player}Timer`).textContent = 
+                        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                } else {
+                    // 正向计时模式
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    document.getElementById(`${player}Timer`).textContent = 
+                        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
             }, 1000);
         }
 
@@ -1888,6 +1894,12 @@
 
         // 显示设置
         function showSettings(player) {
+            // 游戏进行中禁止修改设置
+            if (gameState.isPlaying) {
+                alert('游戏进行中无法修改设置，请先重置游戏或等待游戏结束。');
+                return;
+            }
+            
             if (player) {
                 // 单个玩家的设置
                 document.getElementById('settingsModal').style.display = 'flex';
@@ -1933,9 +1945,6 @@
             gameState.settings.wordCount = newWordCount;
             gameState.settings.timeLimit = newTimeLimit;
             gameState.settings.wordList = newWordList;
-            
-            // 保存到本地存储
-            localStorage.setItem('gameSettings', JSON.stringify(gameState.settings));
             
             // 显示保存成功消息
             alert('设置已保存！游戏将使用新设置。');
@@ -2004,13 +2013,61 @@
                           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
                           确认
                         </button>
+                        <button class="game-btn" style="background: #FFE4B5; color: #B45309;" id="${player}ResetBtn">
+                          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-6.219-8.56"/><path d="M15 4h6v6"/></svg>
+                          重置
+                        </button>
                     `;
                     document.getElementById(`${player}HintBtn`).onclick = () => showHint(player);
                     document.getElementById(`${player}SpeakBtn`).onclick = () => speakWord(player);
                     document.getElementById(`${player}DelBtn`).onclick = () => handleBackspace(player);
                     document.getElementById(`${player}OkBtn`).onclick = () => handleEnter(player);
+                    document.getElementById(`${player}ResetBtn`).onclick = () => resetGame(player);
                 }
             });
+        }
+
+        // 重置游戏函数
+        function resetGame(player) {
+            if (confirm(`确定要重置${player === 'player1' ? '玩家1' : '玩家2'}的游戏吗？当前进度将丢失。`)) {
+                // 停止所有计时器
+                ['player1', 'player2'].forEach(p => {
+                    if (gameState.players[p].timer) {
+                        clearInterval(gameState.players[p].timer);
+                        gameState.players[p].timer = null;
+                    }
+                });
+                
+                // 重置游戏状态
+                gameState.isPlaying = false;
+                ['player1', 'player2'].forEach(p => {
+                    gameState.players[p].currentWordIndex = 0;
+                    gameState.players[p].correctCount = 0;
+                    gameState.players[p].startTime = null;
+                    gameState.players[p].endTime = null;
+                    gameState.players[p].isFinished = false;
+                    gameState.players[p].currentInput = '';
+                    gameState.players[p].correctWords = [];
+                    
+                    // 重置界面显示
+                    document.getElementById(`${p}Prompt`).textContent = '准备开始';
+                    document.getElementById(`${p}WordDisplay`).innerHTML = '';
+                    document.getElementById(`${p}CorrectCount`).textContent = '0';
+                    document.getElementById(`${p}CurrentWord`).textContent = '0';
+                    document.getElementById(`${p}TotalWords`).textContent = '0';
+                    document.getElementById(`${p}Timer`).textContent = '00:00';
+                    
+                    // 隐藏提示
+                    const tip = document.getElementById(`${p}HintTip`);
+                    if (tip) tip.style.display = 'none';
+                });
+                
+                // 重置词库
+                gameState.currentWordList = [];
+                
+                // 重新渲染操作栏
+                renderActionBars();
+            }
         }
 
         // 游戏流程相关操作函数
