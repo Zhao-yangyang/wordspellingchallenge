@@ -223,21 +223,20 @@
             gap: 0.2rem; /* 减小键盘按键之间的间距 */
             margin-bottom: 0.2rem;
             flex-wrap: nowrap; /* 防止按键换行导致布局错乱 */
-            min-height: 2.2rem; /* 略微减小行高 */
+            min-height: 2.5rem; /* 保证行高一致 */
             width: 100%; /* 确保行宽100% */
         }
 
         .keyboard-key {
-            flex: 1 0 8%; /* 改为固定百分比，确保所有按键宽度相同 */
-            min-width: 8%; /* 最小宽度防止按键过小 */
-            max-width: 10%; /* 最大宽度防止按键过大 */
-            height: 2.2rem; /* 减小按键高度 */
+            min-width: 2.5rem;
+            width: 2.5rem;
+            height: 2.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem; /* 减小字体大小 */
+            font-size: 1.2rem;
             font-weight: 700;
-            border-radius: 0.5rem;
+            border-radius: 1rem;
             border: none;
             box-shadow: 0 1px 3px rgba(59, 130, 246, 0.10);
             cursor: pointer;
@@ -245,38 +244,12 @@
             background: #FDE68A;
             color: #B45309;
             margin: 0;
-            padding: 0;
+            flex: 0 0 auto; /* 防止按键被拉伸 */
+            user-select: none; /* 防止用户选择文本 */
+            touch-action: manipulation; /* 优化触摸体验 */
         }
 
-        .keyboard-key.delete {
-            flex: 1.5 0 12%; /* 删除键占更多空间 */
-            max-width: 15%; /* 限制最大宽度 */
-            background: #FECACA;
-            color: #B91C1C;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
 
-        .keyboard-key.enter {
-            flex: 1.5 0 12%; /* 回车键占更多空间 */
-            max-width: 15%; /* 限制最大宽度 */
-            background: #A7F3D0;
-            color: #047857;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .keyboard-key.blank {
-            background: transparent !important;
-            box-shadow: none !important;
-            border: none !important;
-            cursor: default !important;
-            pointer-events: none !important; /* 禁用点击事件 */
-        }
 
         /* 彩色字母按钮 */
         .key-red { background: #FCA5A5; color: #B91C1C; }
@@ -300,9 +273,9 @@
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            gap: 0.5rem;
-            margin: 0.5rem 0;
-            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin: 0.7rem 0 0.2rem 0;
+            flex-wrap: nowrap;
         }
 
         .action-btn, .game-btn {
@@ -310,12 +283,12 @@
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            gap: 0.25rem;
-            font-size: 0.9rem;
+            gap: 0.4rem;
+            font-size: 1rem;
             font-weight: 500;
-            border-radius: 1rem;
-            padding: 0.25rem 0.75rem;
-            min-height: 2rem;
+            border-radius: 1.5rem;
+            padding: 0.36rem 1.4rem;
+            min-height: 2.4rem;
             border: none;
             box-shadow: 0 2px 8px rgba(59, 130, 246, 0.07);
             cursor: pointer;
@@ -328,18 +301,18 @@
         }
 
         .action-btn svg, .game-btn svg {
-            width: 1em;
-            height: 1em;
+            width: 1.2em;
+            height: 1.2em;
             vertical-align: middle;
         }
 
         .btn-start, .btn-ok {
             background: linear-gradient(90deg, #d1fae5 0%, #a7f3d0 100%);
             color: #047857;
-            font-size: 1rem;
+            font-size: 1.08rem;
             font-weight: 700;
-            padding: 0.35rem 1.25rem;
-            min-height: 2.2rem;
+            padding: 0.5rem 2.2rem;
+            min-height: 2.6rem;
             box-shadow: 0 4px 16px rgba(52, 211, 153, 0.13);
         }
 
@@ -719,9 +692,9 @@
                 margin-bottom: 0.4rem;
             }
             .keyboard-key {
-                height: 2.2rem;
-                font-size: 0.95rem;
-                border-radius: 0.6rem;
+                min-width: 2.2rem;
+                height: 2.3rem;
+                font-size: 1rem;
             }
             .result-content {
                 padding: 1.5rem;
@@ -742,8 +715,8 @@
                 margin-bottom: 0.5rem;
             }
             .navbar .action-btn {
-                font-size: 0.85rem;
-                padding: 0.3rem 0.75rem;
+                font-size: 0.9rem;
+                padding: 0.4rem 0.9rem;
             }
             .player-header {
                 flex-direction: row;
@@ -786,23 +759,29 @@
                 gap: 0.25rem;
             }
             .keyboard-row {
-                gap: 0.2rem;
-                min-height: 2.1rem;
+                gap: 0.25rem;
                 margin-bottom: 0.35rem;
+                min-height: 2.2rem;
+                width: 100%;
+                justify-content: space-between;
             }
             .keyboard-key {
-                height: 2.1rem;
+                min-width: 8.5%;
+                width: 8.5%;
+                height: 2.2rem;
+                font-size: 1rem;
+                border-radius: 0.4rem;
+            }
+            .action-bar {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.6rem;
+                margin: 1rem 0;
+            }
+            .action-btn, .game-btn {
                 font-size: 0.9rem;
-                border-radius: 0.5rem;
-            }
-            .action-bar { 
-                gap: 0.4rem; 
-                margin: 0.5rem 0;
-            }
-            .game-btn {
-                font-size: 0.85rem;
-                padding: 0.3rem 0.75rem;
-                min-height: 2.1rem;
+                padding: 0.4rem 0.9rem;
+                min-height: 2.2rem;
             }
             .result-content {
                 padding: 1.25rem;
@@ -814,6 +793,10 @@
         }
 
         @media (max-width: 480px) {
+            .action-bar { 
+                gap: 0.5rem; 
+                margin: 0.75rem 0;
+            }
             .player-header {
                 flex-direction: column;
                 align-items: center;
@@ -848,39 +831,46 @@
             }
             .keyboard-row {
                 gap: 0.15rem;
-                min-height: 1.9rem;
-                margin-bottom: 0.3rem;
+                min-height: 2rem;
             }
-            /* 在极小屏幕上更优化键盘布局 */
             .keyboard-key {
-                height: 1.9rem;
-                font-size: 0.8rem;
+                min-width: 8%;
+                width: 8%;
+                height: 2rem;
+                font-size: 0.9rem;
                 border-radius: 0.4rem;
+                padding: 0;
+            }
+            .action-btn, .game-btn {
+                font-size: 0.85rem;
+                padding: 0.35rem 0.75rem;
+                min-height: 2rem;
             }
         }
 
-        /* 添加更小屏幕的键盘优化 */
-        @media (max-width: 400px) {
-            .virtual-keyboard {
-                padding: 0.3rem 0.2rem;
+        /* 添加超小屏幕适配 */
+        @media (max-width: 360px) {
+            .keyboard-key {
+                min-width: 7.5%;
+                width: 7.5%;
+                font-size: 0.85rem;
+            }
+        }
+        
+        /* 添加超超小屏幕适配 */
+        @media (max-width: 320px) {
+            .keyboard-key {
+                min-width: 7%;
+                width: 7%;
+                font-size: 0.8rem;
+                border-radius: 0.3rem;
             }
             .keyboard-row {
                 gap: 0.1rem;
             }
-            .keyboard-key {
-                height: 1.8rem;
-                font-size: 0.75rem;
-                border-radius: 0.3rem;
-            }
-            .keyboard-key.delete, .keyboard-key.enter {
-                font-size: 0.7rem;
-            }
-            .input-box {
-                width: 1.8rem;
-                height: 1.8rem;
-                font-size: 1rem;
-            }
         }
+
+
         
         /* 防止Safari中出现的常见问题 */
         @supports (-webkit-touch-callout: none) {
@@ -970,6 +960,10 @@
                 <button class="action-btn btn-start" id="globalStartGameBtn">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 3v18l15-9L5 3z"/></svg>
                     开始游戏
+                </button>
+                <button class="action-btn" style="background: #FFE4B5; color: #B45309;" id="globalResetBtn">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-6.219-8.56"/><path d="M15 4h6v6"/></svg>
+                    重置游戏
                 </button>
                 <button class="action-btn btn-help" id="helpBtn">
                   <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 1 1 5.82 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
@@ -1300,113 +1294,15 @@
             setupEventListeners();
             renderActionBars();
             
+            // 初始隐藏重置按钮
+            document.getElementById('globalResetBtn').style.display = 'none';
+            
             // 添加键盘大小自适应
             optimizeKeyboardSize();
             window.addEventListener('resize', optimizeKeyboardSize);
         }
 
-        // 键盘大小动态优化
-        function optimizeKeyboardSize() {
-            const screenWidth = window.innerWidth;
-            const keyboards = [document.getElementById('player1Keyboard'), document.getElementById('player2Keyboard')];
-            
-            keyboards.forEach(keyboard => {
-                if (!keyboard) return;
-                
-                const keys = keyboard.querySelectorAll('.keyboard-key:not(.enter):not(.delete)');
-                const specialKeys = keyboard.querySelectorAll('.keyboard-key.enter, .keyboard-key.delete');
-                
-                // 清除可能影响布局的内联样式
-                keyboard.querySelectorAll('.keyboard-row').forEach(row => {
-                    row.style.width = '100%';
-                    row.style.justifyContent = 'center';
-                    row.style.gap = '0.2rem';
-                });
-                
-                // 根据屏幕宽度设置键盘样式
-                if (screenWidth <= 400) {
-                    // 超小屏幕
-                    keyboard.style.padding = '0.3rem 0.2rem';
-                    
-                    keys.forEach(key => {
-                        key.style.flex = '1 0 6%';
-                        key.style.minWidth = '6%';
-                        key.style.maxWidth = '8%';
-                        key.style.height = '1.8rem';
-                        key.style.fontSize = '0.75rem';
-                        key.style.borderRadius = '0.3rem';
-                    });
-                    
-                    specialKeys.forEach(key => {
-                        key.style.flex = '1.3 0 10%';
-                        key.style.maxWidth = '14%';
-                        key.style.fontSize = '0.7rem';
-                        key.style.height = '1.8rem';
-                    });
-                } else if (screenWidth <= 480) {
-                    // 小屏幕
-                    keyboard.style.padding = '0.4rem 0.25rem';
-                    
-                    keys.forEach(key => {
-                        key.style.flex = '1 0 7%';
-                        key.style.minWidth = '7%';
-                        key.style.maxWidth = '9%';
-                        key.style.height = '2rem';
-                        key.style.fontSize = '0.8rem';
-                        key.style.borderRadius = '0.4rem';
-                    });
-                    
-                    specialKeys.forEach(key => {
-                        key.style.flex = '1.4 0 11%';
-                        key.style.maxWidth = '15%';
-                        key.style.fontSize = '0.8rem';
-                        key.style.height = '2rem';
-                    });
-                } else if (screenWidth <= 640) {
-                    // 中小屏幕
-                    keyboard.style.padding = '0.5rem 0.3rem';
-                    
-                    keys.forEach(key => {
-                        key.style.flex = '1 0 8%';
-                        key.style.minWidth = '8%';
-                        key.style.maxWidth = '10%';
-                        key.style.height = '2.1rem';
-                        key.style.fontSize = '0.9rem';
-                        key.style.borderRadius = '0.45rem';
-                    });
-                    
-                    specialKeys.forEach(key => {
-                        key.style.flex = '1.5 0 12%';
-                        key.style.maxWidth = '16%';
-                        key.style.fontSize = '0.9rem';
-                        key.style.height = '2.1rem';
-                    });
-                } else {
-                    // 640px以上的屏幕
-                    keyboard.style.padding = '0.6rem 0.4rem';
-                    
-                    keys.forEach(key => {
-                        key.style.flex = '1 0 8%';
-                        key.style.minWidth = '8%';
-                        key.style.maxWidth = '10%';
-                        key.style.height = '2.2rem';
-                        key.style.fontSize = '1rem';
-                        key.style.borderRadius = '0.5rem';
-                    });
-                    
-                    specialKeys.forEach(key => {
-                        key.style.flex = '1.5 0 12%';
-                        key.style.maxWidth = '15%';
-                        key.style.fontSize = '1rem';
-                        key.style.height = '2.2rem';
-                    });
-                }
-                
-                // 确保键盘容器宽度为100%
-                keyboard.style.width = '100%';
-                keyboard.style.maxWidth = '100%';
-            });
-        }
+
 
         // 创建虚拟键盘
         function createKeyboards() {
@@ -1422,14 +1318,14 @@
                         {key:'u', color:'key-pink'},{key:'i', color:'key-green'},{key:'o', color:'key-red'},{key:'p', color:'key-blue'}
                     ],
                     [
-                        {key:'', blank:true},{key:'a', color:'key-pink'},{key:'s', color:'key-green'},{key:'d', color:'key-blue'},
+                        {key:'a', color:'key-pink'},{key:'s', color:'key-green'},{key:'d', color:'key-blue'},
                         {key:'f', color:'key-yellow'},{key:'g', color:'key-orange'},{key:'h', color:'key-purple'},
-                        {key:'j', color:'key-pink'},{key:'k', color:'key-green'},{key:'l', color:'key-blue'},{key:'↵', enter:true}
+                        {key:'j', color:'key-pink'},{key:'k', color:'key-green'},{key:'l', color:'key-blue'}
                     ],
                     [
-                        {key:'', blank:true},{key:'', blank:true},{key:'z', color:'key-green'},{key:'x', color:'key-blue'},{key:'c', color:'key-yellow'},
+                        {key:'z', color:'key-green'},{key:'x', color:'key-blue'},{key:'c', color:'key-yellow'},
                         {key:'v', color:'key-orange'},{key:'b', color:'key-blue'},{key:'n', color:'key-pink'},
-                        {key:'m', color:'key-green'},{key:'', blank:true},{key:'⌫', del:true}
+                        {key:'m', color:'key-green'}
                     ]
                 ];
 
@@ -1437,49 +1333,17 @@
                     const rowDiv = document.createElement('div');
                     rowDiv.className = 'keyboard-row';
                     
-                    // 补齐第三行，使其按键数量一致
-                    if (row.length < 10) {
-                        // 计算需要在开头补充的空白按键数量
-                        const blankCount = Math.floor((10 - row.length) / 2);
-                        for (let i = 0; i < blankCount; i++) {
-                            const blankKey = document.createElement('div');
-                            blankKey.className = 'keyboard-key blank';
-                            blankKey.style.background = 'transparent';
-                            blankKey.style.boxShadow = 'none';
-                            rowDiv.appendChild(blankKey);
-                        }
-                    }
-                    
                     row.forEach((item) => {
-                        if (item.blank) {
-                            const blankKey = document.createElement('div');
-                            blankKey.className = 'keyboard-key blank';
-                            rowDiv.appendChild(blankKey);
-                        } else if (item.enter) {
-                            const enterKey = document.createElement('button');
-                            enterKey.className = 'keyboard-key enter';
-                            enterKey.textContent = '↵';
-                            enterKey.onclick = () => handleEnter(player);
-                            rowDiv.appendChild(enterKey);
-                        } else if (item.del) {
-                            const deleteKey = document.createElement('button');
-                            deleteKey.className = 'keyboard-key delete';
-                            deleteKey.textContent = '⌫';
-                            deleteKey.onclick = () => handleBackspace(player);
-                            rowDiv.appendChild(deleteKey);
-                        } else {
-                            const keyElement = document.createElement('button');
-                            keyElement.className = 'keyboard-key ' + (item.color||'');
-                            keyElement.textContent = item.key;
-                            keyElement.onclick = () => handleKeyPress(player, item.key);
-                            rowDiv.appendChild(keyElement);
-                        }
+                        const keyElement = document.createElement('button');
+                        keyElement.className = 'keyboard-key ' + (item.color||'');
+                        keyElement.textContent = item.key;
+                        keyElement.onclick = () => handleKeyPress(player, item.key);
+                        rowDiv.appendChild(keyElement);
                     });
                     keyboard.appendChild(rowDiv);
                 });
                 
-                // 调用优化函数立即优化键盘大小
-                setTimeout(() => optimizeKeyboardSize(), 0);
+
             });
         }
 
@@ -1497,13 +1361,17 @@
             document.getElementById('importTXT').onchange = importTXT;
             document.getElementById('saveWordList').onclick = exportWordList;
             document.getElementById('restartBtn').onclick = restartGame;
-            document.getElementById('globalStartGameBtn').onclick = () => startGame();
-            document.getElementById('closeResultBtn').onclick = () => {
+                    document.getElementById('globalStartGameBtn').onclick = () => startGame();
+        document.getElementById('globalResetBtn').onclick = () => resetGame();
+        document.getElementById('closeResultBtn').onclick = () => {
                 document.getElementById('resultModal').style.display = 'none';
                 // 重置游戏状态
                 gameState.isPlaying = false;
                 gameState.players.player1.isFinished = false;
                 gameState.players.player2.isFinished = false;
+                
+                // 隐藏重置按钮
+                document.getElementById('globalResetBtn').style.display = 'none';
                 
                 // 停止并清除所有计时器
                 ['player1', 'player2'].forEach(p => {
@@ -1559,6 +1427,9 @@
             
             // 设置游戏状态为进行中
             gameState.isPlaying = true;
+            
+            // 显示重置按钮
+            document.getElementById('globalResetBtn').style.display = 'inline-flex';
             
             if (player) {
                 // 单个玩家开始游戏
@@ -1840,11 +1711,7 @@
             
             if (!player) return;
 
-            if (event.key === 'Enter') {
-                handleEnter(player);
-            } else if (event.key === 'Backspace') {
-                handleBackspace(player);
-            } else if (/^[a-zA-Z]$/.test(event.key)) {
+            if (/^[a-zA-Z]$/.test(event.key)) {
                 handleKeyPress(player, event.key.toLowerCase());
             }
         }
@@ -2013,23 +1880,18 @@
                           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
                           确认
                         </button>
-                        <button class="game-btn" style="background: #FFE4B5; color: #B45309;" id="${player}ResetBtn">
-                          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-6.219-8.56"/><path d="M15 4h6v6"/></svg>
-                          重置
-                        </button>
                     `;
                     document.getElementById(`${player}HintBtn`).onclick = () => showHint(player);
                     document.getElementById(`${player}SpeakBtn`).onclick = () => speakWord(player);
                     document.getElementById(`${player}DelBtn`).onclick = () => handleBackspace(player);
                     document.getElementById(`${player}OkBtn`).onclick = () => handleEnter(player);
-                    document.getElementById(`${player}ResetBtn`).onclick = () => resetGame(player);
                 }
             });
         }
 
-        // 重置游戏函数
-        function resetGame(player) {
-            if (confirm(`确定要重置${player === 'player1' ? '玩家1' : '玩家2'}的游戏吗？当前进度将丢失。`)) {
+        // 全局重置游戏函数
+        function resetGame() {
+            if (confirm('确定要重置整个游戏吗？两个玩家的进度都将丢失。')) {
                 // 停止所有计时器
                 ['player1', 'player2'].forEach(p => {
                     if (gameState.players[p].timer) {
@@ -2040,6 +1902,10 @@
                 
                 // 重置游戏状态
                 gameState.isPlaying = false;
+                
+                // 隐藏重置按钮
+                document.getElementById('globalResetBtn').style.display = 'none';
+                
                 ['player1', 'player2'].forEach(p => {
                     gameState.players[p].currentWordIndex = 0;
                     gameState.players[p].correctCount = 0;

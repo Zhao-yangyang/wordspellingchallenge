@@ -167,26 +167,7 @@
             user-select: none; /* 防止用户选择文本 */
             touch-action: manipulation; /* 优化触摸体验 */
         }
-        .keyboard-key.delete {
-            min-width: 5.2rem;
-            height: 2.5rem;
-            background: #FECACA;
-            color: #B91C1C;
-            font-size: 1.3rem;
-        }
-        .keyboard-key.enter {
-            min-width: 5.2rem;
-            height: 2.5rem;
-            background: #A7F3D0;
-            color: #047857;
-            font-size: 1.3rem;
-        }
-        .keyboard-key.blank {
-            background: transparent;
-            box-shadow: none;
-            cursor: default;
-            min-width: 2.5rem;
-        }
+
         /* 彩色字母按钮 */
         .key-red { background: #FCA5A5; color: #B91C1C; }
         .key-green { background: #A7F3D0; color: #047857; }
@@ -366,10 +347,7 @@
                 font-size: 1rem;
                 border-radius: 0.4rem;
             }
-            .keyboard-key.delete, .keyboard-key.enter {
-                min-width: 15%;
-                width: 15%; /* 允许特殊键自适应宽度 */
-            }
+
             .action-bar { 
                 gap: 0.5rem; 
                 margin: 0.75rem 0;
@@ -425,10 +403,7 @@
                 border-radius: 0.4rem;
                 padding: 0;
             }
-            .keyboard-key.delete, .keyboard-key.enter {
-                min-width: 13%;
-                width: 13%;
-            }
+
             .action-btn, .game-btn {
                 font-size: 0.85rem;
                 padding: 0.35rem 0.75rem;
@@ -443,10 +418,7 @@
                 width: 7.5%;
                 font-size: 0.85rem;
             }
-            .keyboard-key.delete, .keyboard-key.enter {
-                min-width: 12%;
-                width: 12%;
-            }
+
         }
         
         /* 添加超超小屏幕适配 */
@@ -457,10 +429,7 @@
                 font-size: 0.8rem;
                 border-radius: 0.3rem;
             }
-            .keyboard-key.delete, .keyboard-key.enter {
-                min-width: 11%;
-                width: 11%;
-            }
+
             .keyboard-row {
                 gap: 0.1rem;
             }
@@ -744,13 +713,7 @@
             letter-spacing: 0.04em;
         }
 
-        /* 特殊按键调整 */
-        .keyboard-key.enter, .keyboard-key.delete {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0; /* 防止特殊键被压缩 */
-        }
+
         
         /* 添加键盘容器溢出保护 */
         #keyboard {
@@ -1021,74 +984,10 @@
             setupEventListeners();
             renderActionBar();
             
-            // 添加键盘大小自适应
-            optimizeKeyboardSize();
-            window.addEventListener('resize', optimizeKeyboardSize);
+
         }
         
-        // 键盘大小动态优化
-        function optimizeKeyboardSize() {
-            const screenWidth = window.innerWidth;
-            const keyboard = document.getElementById('keyboard');
-            const keys = document.querySelectorAll('.keyboard-key:not(.enter):not(.delete)');
-            const specialKeys = document.querySelectorAll('.keyboard-key.enter, .keyboard-key.delete');
-            
-            // 根据屏幕宽度动态计算按键宽度
-            if (screenWidth <= 320) {
-                // 超小屏幕
-                keys.forEach(key => {
-                    key.style.width = '7%';
-                    key.style.minWidth = '7%';
-                });
-                specialKeys.forEach(key => {
-                    key.style.width = '11%';
-                    key.style.minWidth = '11%';
-                });
-            } else if (screenWidth <= 360) {
-                // 小屏幕
-                keys.forEach(key => {
-                    key.style.width = '7.5%';
-                    key.style.minWidth = '7.5%';
-                });
-                specialKeys.forEach(key => {
-                    key.style.width = '12%';
-                    key.style.minWidth = '12%';
-                });
-            } else if (screenWidth <= 420) {
-                // 中小屏幕
-                keys.forEach(key => {
-                    key.style.width = '8%';
-                    key.style.minWidth = '8%';
-                });
-                specialKeys.forEach(key => {
-                    key.style.width = '13%';
-                    key.style.minWidth = '13%';
-                });
-            } else if (screenWidth <= 640) {
-                // 中等屏幕
-                keys.forEach(key => {
-                    key.style.width = '8.5%';
-                    key.style.minWidth = '8.5%';
-                });
-                specialKeys.forEach(key => {
-                    key.style.width = '15%';
-                    key.style.minWidth = '15%';
-                });
-            }
-            
-            // 调整行宽度和对齐方式
-            const rows = document.querySelectorAll('.keyboard-row');
-            rows.forEach(row => {
-                row.style.width = '100%';
-                row.style.justifyContent = 'space-between';
-            });
-            
-            // 确保键盘容器宽度为100%
-            if (keyboard) {
-                keyboard.style.width = '100%';
-                keyboard.style.maxWidth = '100%';
-            }
-        }
+
 
         // 创建虚拟键盘
         function createKeyboard() {
@@ -1100,39 +999,21 @@
                     {key:'q', color:'key-red'},{key:'w', color:'key-green'},{key:'e', color:'key-blue'},{key:'r', color:'key-yellow'},{key:'t', color:'key-orange'},{key:'y', color:'key-purple'},{key:'u', color:'key-pink'},{key:'i', color:'key-green'},{key:'o', color:'key-red'},{key:'p', color:'key-blue'}
                 ],
                 [
-                    {key:'', blank:true},{key:'a', color:'key-pink'},{key:'s', color:'key-green'},{key:'d', color:'key-blue'},{key:'f', color:'key-yellow'},{key:'g', color:'key-orange'},{key:'h', color:'key-purple'},{key:'j', color:'key-pink'},{key:'k', color:'key-green'},{key:'l', color:'key-blue'},{key:'↵', enter:true}
+                    {key:'a', color:'key-pink'},{key:'s', color:'key-green'},{key:'d', color:'key-blue'},{key:'f', color:'key-yellow'},{key:'g', color:'key-orange'},{key:'h', color:'key-purple'},{key:'j', color:'key-pink'},{key:'k', color:'key-green'},{key:'l', color:'key-blue'}
                 ],
                 [
-                    {key:'', blank:true},{key:'', blank:true},{key:'z', color:'key-green'},{key:'x', color:'key-blue'},{key:'c', color:'key-yellow'},{key:'v', color:'key-orange'},{key:'b', color:'key-blue'},{key:'n', color:'key-pink'},{key:'m', color:'key-green'},{key:'', blank:true},{key:'⌫', del:true}
+                    {key:'z', color:'key-green'},{key:'x', color:'key-blue'},{key:'c', color:'key-yellow'},{key:'v', color:'key-orange'},{key:'b', color:'key-blue'},{key:'n', color:'key-pink'},{key:'m', color:'key-green'}
                 ]
             ];
             rows.forEach((row) => {
                 const rowDiv = document.createElement('div');
                 rowDiv.className = 'keyboard-row';
                 row.forEach((item) => {
-                    if (item.blank) {
-                        const blankKey = document.createElement('div');
-                        blankKey.className = 'keyboard-key blank';
-                        rowDiv.appendChild(blankKey);
-                    } else if (item.enter) {
-                        const enterKey = document.createElement('button');
-                        enterKey.className = 'keyboard-key enter';
-                        enterKey.textContent = '↵';
-                        enterKey.onclick = handleEnter;
-                        rowDiv.appendChild(enterKey);
-                    } else if (item.del) {
-                        const deleteKey = document.createElement('button');
-                        deleteKey.className = 'keyboard-key delete';
-                        deleteKey.textContent = '⌫';
-                        deleteKey.onclick = handleBackspace;
-                        rowDiv.appendChild(deleteKey);
-                    } else {
-                        const keyElement = document.createElement('button');
-                        keyElement.className = 'keyboard-key ' + (item.color||'');
-                        keyElement.textContent = item.key;
-                        keyElement.onclick = () => handleKeyPress(item.key);
-                        rowDiv.appendChild(keyElement);
-                    }
+                    const keyElement = document.createElement('button');
+                    keyElement.className = 'keyboard-key ' + (item.color||'');
+                    keyElement.textContent = item.key;
+                    keyElement.onclick = () => handleKeyPress(item.key);
+                    rowDiv.appendChild(keyElement);
                 });
                 keyboard.appendChild(rowDiv);
             });
@@ -1312,11 +1193,7 @@
         function handleKeyDown(event) {
             if (!gameState.isPlaying) return;
             if (event.ctrlKey || event.metaKey || event.altKey) return;
-            if (event.key === 'Enter') {
-                handleEnter();
-            } else if (event.key === 'Backspace') {
-                handleBackspace();
-            } else if (/^[a-zA-Z]$/.test(event.key)) {
+            if (/^[a-zA-Z]$/.test(event.key)) {
                 handleKeyPress(event.key.toLowerCase());
             }
         }
