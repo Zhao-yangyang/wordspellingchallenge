@@ -8,4 +8,30 @@
 狮子,lion
 大象,elephant
 长颈鹿,giraffe
-熊猫,panda 
+熊猫,panda
+披萨,pizza
+汉堡,hamburger
+薯条,french fries
+可乐,cola
+牛奶,milk
+面包,bread
+鸡蛋,egg
+冰激凌,ice cream
+薯片,chips
+皮夹克,jacket
+牛仔裤,jeans
+衬衫,shirt
+裙子,dress
+裤子,pants
+鞋子,shoes
+袜子,socks
+帽子,hat
+手套,gloves
+笔记本电脑,laptop
+手机,phone
+电脑,computer
+电视,tv
+冰箱,fridge
+洗衣机,washer
+空调,air conditioner
+洗衣机,washer

@@ -949,13 +949,9 @@
         <div class="navbar-content">
             <h1>单词拼写挑战 - 双人版</h1>
             <div class="action-bar">
-                <button class="action-btn btn-settings" id="settingsBtn">
-                  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 5 15.4a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 5 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 8 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09A1.65 1.65 0 0 0 16 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19 8.6a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09A1.65 1.65 0 0 0 19 15.4z"/></svg>
-                  设置
-                </button>
-                <button class="action-btn btn-wordlist" id="wordListBtn">
+                <button class="action-btn btn-settings" id="wordListBtn">
                   <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4h16v16H4z"/></svg>
-                  词库管理
+                  设置
                 </button>
                 <button class="action-btn btn-start" id="globalStartGameBtn">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 3v18l15-9L5 3z"/></svg>
@@ -995,9 +991,9 @@
                 </div>
 
                 <div class="action-bar" id="player1ActionBar">
-                    <button class="action-btn btn-wordlist" id="player1WordListBtn">
+                    <button class="action-btn btn-settings" id="player1WordListBtn">
                       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4h16v16H4z"/></svg>
-                      词库管理
+                      设置
                     </button>
                     <button class="action-btn btn-start" id="player1StartBtn">
                       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 3v18l15-9L5 3z"/></svg>
@@ -1032,9 +1028,9 @@
                 </div>
 
                 <div class="action-bar" id="player2ActionBar">
-                    <button class="action-btn btn-wordlist" id="player2WordListBtn">
+                    <button class="action-btn btn-settings" id="player2WordListBtn">
                       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4h16v16H4z"/></svg>
-                      词库管理
+                      设置
                     </button>
                     <button class="action-btn btn-start" id="player2StartBtn">
                       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 3v18l15-9L5 3z"/></svg>
@@ -1047,36 +1043,6 @@
                 </div>
 
                 <div class="virtual-keyboard" id="player2Keyboard"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 设置弹窗 -->
-    <div class="modal" id="settingsModal">
-        <div class="modal-content">
-            <h2>游戏设置</h2>
-            <div class="settings-form">
-                <div class="form-group">
-                    <label for="wordCount">单词数量:</label>
-                    <input type="number" id="wordCount" min="5" max="50" value="10">
-                </div>
-                <div class="form-group">
-                    <label for="timeLimit">时间限制(秒):</label>
-                    <input type="number" id="timeLimit" min="0" value="0">
-                    <small>0表示无时间限制</small>
-                </div>
-                <div class="form-group">
-                    <label for="wordList">词库选择:</label>
-                    <select id="wordList">
-                        <option value="basic">基础词汇</option>
-                        <option value="animals">动物</option>
-                        <option value="food">食物</option>
-                    </select>
-                </div>
-                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
-                    <button class="btn btn-secondary" id="cancelSettings">取消</button>
-                    <button class="btn btn-primary" id="saveSettings">保存设置</button>
-                </div>
             </div>
         </div>
     </div>
@@ -1127,11 +1093,16 @@
         </div>
     </div>
 
-    <!-- 词库管理弹窗 -->
+    <!-- 设置弹窗 -->
     <div class="modal" id="wordListModal">
         <div class="modal-content">
-            <h2>词库管理</h2>
+            <h2>设置</h2>
             <div class="word-list-form">
+                <div class="form-group">
+                    <label for="timeLimit">时间限制(秒):</label>
+                    <input type="number" id="timeLimit" min="0" value="0">
+                    <small>0表示无时间限制</small>
+                </div>
                 <div class="form-group">
                     <label for="importTXT">上传文本文件导入:</label>
                     <input type="file" id="importTXT" accept=".txt,text/plain">
@@ -1156,6 +1127,7 @@
                 </div>
                 <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
                     <button class="btn btn-secondary" id="closeWordList">关闭</button>
+                    <button class="btn btn-primary" id="saveSettings">保存设置</button>
                 </div>
             </div>
         </div>
@@ -1188,96 +1160,14 @@
                 }
             },
             settings: {
-                wordCount: 10,
-                timeLimit: 0,
-                wordList: 'basic'
+                timeLimit: 0
             },
             currentWordList: []
         };
 
         // 基础词库数据
         const wordLists = {
-            basic: [
-                { prompt: "香蕉", answer: "banana" },
-                { prompt: "苹果", answer: "apple" },
-                { prompt: "猫", answer: "cat" },
-                { prompt: "狗", answer: "dog" },
-                { prompt: "书", answer: "book" },
-                { prompt: "电脑", answer: "computer" },
-                { prompt: "手机", answer: "phone" },
-                { prompt: "学校", answer: "school" },
-                { prompt: "老师", answer: "teacher" },
-                { prompt: "学生", answer: "student" },
-                { prompt: "朋友", answer: "friend" },
-                { prompt: "家庭", answer: "family" },
-                { prompt: "父亲", answer: "father" },
-                { prompt: "母亲", answer: "mother" },
-                { prompt: "兄弟", answer: "brother" },
-                { prompt: "姐妹", answer: "sister" },
-                { prompt: "时间", answer: "time" },
-                { prompt: "水", answer: "water" },
-                { prompt: "食物", answer: "food" },
-                { prompt: "国家", answer: "country" },
-                { prompt: "城市", answer: "city" },
-                { prompt: "人", answer: "person" },
-                { prompt: "名字", answer: "name" },
-                { prompt: "工作", answer: "work" },
-                { prompt: "房子", answer: "house" }
-            ],
-            animals: [
-                { prompt: "老虎", answer: "tiger" },
-                { prompt: "狮子", answer: "lion" },
-                { prompt: "大象", answer: "elephant" },
-                { prompt: "长颈鹿", answer: "giraffe" },
-                { prompt: "熊猫", answer: "panda" },
-                { prompt: "猴子", answer: "monkey" },
-                { prompt: "兔子", answer: "rabbit" },
-                { prompt: "鸟", answer: "bird" },
-                { prompt: "鹦鹉", answer: "parrot" },
-                { prompt: "鱼", answer: "fish" },
-                { prompt: "鲨鱼", answer: "shark" },
-                { prompt: "海豚", answer: "dolphin" },
-                { prompt: "鲸鱼", answer: "whale" },
-                { prompt: "章鱼", answer: "octopus" },
-                { prompt: "青蛙", answer: "frog" },
-                { prompt: "蛇", answer: "snake" },
-                { prompt: "蜥蜴", answer: "lizard" },
-                { prompt: "乌龟", answer: "turtle" },
-                { prompt: "鳄鱼", answer: "crocodile" },
-                { prompt: "蝴蝶", answer: "butterfly" },
-                { prompt: "蜜蜂", answer: "bee" },
-                { prompt: "蚂蚁", answer: "ant" },
-                { prompt: "蜘蛛", answer: "spider" },
-                { prompt: "蝎子", answer: "scorpion" },
-                { prompt: "羊", answer: "sheep" }
-            ],
-            food: [
-                { prompt: "披萨", answer: "pizza" },
-                { prompt: "汉堡", answer: "hamburger" },
-                { prompt: "面条", answer: "noodle" },
-                { prompt: "米饭", answer: "rice" },
-                { prompt: "面包", answer: "bread" },
-                { prompt: "蛋糕", answer: "cake" },
-                { prompt: "巧克力", answer: "chocolate" },
-                { prompt: "冰淇淋", answer: "icecream" },
-                { prompt: "咖啡", answer: "coffee" },
-                { prompt: "茶", answer: "tea" },
-                { prompt: "牛奶", answer: "milk" },
-                { prompt: "果汁", answer: "juice" },
-                { prompt: "水果", answer: "fruit" },
-                { prompt: "蔬菜", answer: "vegetable" },
-                { prompt: "鸡肉", answer: "chicken" },
-                { prompt: "牛肉", answer: "beef" },
-                { prompt: "猪肉", answer: "pork" },
-                { prompt: "鱼肉", answer: "fish" },
-                { prompt: "虾", answer: "shrimp" },
-                { prompt: "蟹", answer: "crab" },
-                { prompt: "鸡蛋", answer: "egg" },
-                { prompt: "奶酪", answer: "cheese" },
-                { prompt: "沙拉", answer: "salad" },
-                { prompt: "酱汁", answer: "sauce" },
-                { prompt: "糖", answer: "sugar" }
-            ]
+            custom: []
         };
 
         // 初始化游戏
@@ -1342,10 +1232,8 @@
         // 设置事件监听器
         function setupEventListeners() {
             // 导航栏按钮事件
-            document.getElementById('settingsBtn').onclick = () => showSettings();
             document.getElementById('helpBtn').onclick = () => showHelp();
             document.getElementById('saveSettings').onclick = saveSettings;
-            document.getElementById('cancelSettings').onclick = () => hideSettings();
             document.getElementById('closeHelp').onclick = () => hideHelp();
             document.getElementById('wordListBtn').onclick = () => showWordList();
             document.getElementById('closeWordList').onclick = () => hideWordList();
@@ -1467,15 +1355,14 @@
             if (player) {
                 // 单个玩家开始游戏
                 // 获取当前词库
-                const currentList = wordLists[gameState.settings.wordList];
+                const currentList = wordLists.custom;
                 if (!currentList || currentList.length === 0) {
                     alert('当前词库为空，请先添加单词！');
                     return;
                 }
                 
-                // 随机选择单词
-                gameState.currentWordList = shuffleArray([...currentList])
-                    .slice(0, Math.min(gameState.settings.wordCount, currentList.length));
+                // 使用所有可用单词
+                gameState.currentWordList = shuffleArray([...currentList]);
 
                 // 更新界面
                 updateGameInfo(player);
@@ -1486,15 +1373,14 @@
             } else {
                 // 两个玩家同时开始游戏                
                 // 获取当前词库
-                const currentList = wordLists[gameState.settings.wordList];
+                const currentList = wordLists.custom;
                 if (!currentList || currentList.length === 0) {
                     alert('当前词库为空，请先添加单词！');
                     return;
                 }
                 
-                // 随机选择单词
-                gameState.currentWordList = shuffleArray([...currentList])
-                    .slice(0, Math.min(gameState.settings.wordCount, currentList.length));
+                // 使用所有可用单词
+                gameState.currentWordList = shuffleArray([...currentList]);
 
                 // 更新界面
                 ['player1', 'player2'].forEach(p => {
@@ -1810,63 +1696,22 @@
             startGame();
         }
 
-        // 显示设置
-        function showSettings(player) {
-            // 游戏进行中禁止修改设置
-            if (gameState.isPlaying) {
-                alert('游戏进行中无法修改设置，请先重置游戏或等待游戏结束。');
-                return;
-            }
-            
-            if (player) {
-                // 单个玩家的设置
-                document.getElementById('settingsModal').style.display = 'flex';
-                // 可以在这里添加玩家特定的设置
-            } else {
-                // 全局设置
-                document.getElementById('settingsModal').style.display = 'flex';
-            }
-        }
-
-        // 隐藏设置
-        function hideSettings() {
-            document.getElementById('settingsModal').style.display = 'none';
-        }
-
         // 保存设置
         function saveSettings() {
-            const newWordCount = parseInt(document.getElementById('wordCount').value);
             const newTimeLimit = parseInt(document.getElementById('timeLimit').value);
-            const newWordList = document.getElementById('wordList').value;
             
             // 确保有效值
-            if (isNaN(newWordCount) || newWordCount < 5) {
-                alert('单词数量必须至少为5');
-                return;
-            }
-            
             if (isNaN(newTimeLimit) || newTimeLimit < 0) {
                 alert('时间限制必须为非负数');
                 return;
             }
             
-            // 检查词库是否存在
-            if (!wordLists[newWordList] || wordLists[newWordList].length === 0) {
-                alert('所选词库为空，请先添加单词或选择其他词库');
-                return;
-            }
-            
-            // 保存之前的设置以便显示变化
-            const oldSettings = {...gameState.settings};
-            
             // 应用设置
-            gameState.settings.wordCount = newWordCount;
             gameState.settings.timeLimit = newTimeLimit;
-            gameState.settings.wordList = newWordList;
             
             // 显示保存成功消息
             alert('设置已保存！游戏将使用新设置。');
-            hideSettings();
+            hideWordList();
         }
 
         // 显示帮助
@@ -1888,9 +1733,7 @@
 
         // 更新设置界面
         function updateSettingsUI() {
-            document.getElementById('wordCount').value = gameState.settings.wordCount;
             document.getElementById('timeLimit').value = gameState.settings.timeLimit;
-            document.getElementById('wordList').value = gameState.settings.wordList;
         }
 
         // 工具函数：打乱数组
@@ -2056,15 +1899,21 @@
             }
         }
 
-        // 词库管理相关函数
+        // 设置相关函数
         function showWordList(player) {
+            // 游戏进行中禁止修改设置
+            if (gameState.isPlaying) {
+                alert('游戏进行中无法修改设置，请先重置游戏或等待游戏结束。');
+                return;
+            }
+            
             if (player) {
-                // 单个玩家的词库管理
+                // 单个玩家的设置
                 document.getElementById('wordListModal').style.display = 'flex';
                 updateWordListDisplay();
-                // 可以在这里添加玩家特定的词库管理
+                // 可以在这里添加玩家特定的设置
             } else {
-                // 全局词库管理
+                // 全局设置
                 document.getElementById('wordListModal').style.display = 'flex';
                 updateWordListDisplay();
             }
@@ -2078,7 +1927,7 @@
             const container = document.getElementById('currentWordList');
             container.innerHTML = '';
             
-            const currentList = wordLists[gameState.settings.wordList];
+            const currentList = wordLists.custom;
             if (!currentList || currentList.length === 0) {
                 container.innerHTML = '<div style="text-align: center; color: #6B7280; padding: 1rem;">当前词库为空</div>';
                 return;
@@ -2126,20 +1975,22 @@
                 return;
             }
 
-            // 验证英文单词格式
-            if (!/^[a-zA-Z]+$/.test(answer)) {
-                alert('英文单词只能包含字母');
+            // 验证英文单词格式（允许字母和空格）
+            if (!/^[a-zA-Z\s]+$/.test(answer)) {
+                alert('英文单词只能包含字母和空格');
                 return;
             }
             
             // 检查是否已存在
-            const currentList = wordLists[gameState.settings.wordList];
+            const currentList = wordLists.custom;
             if (currentList.some(word => word.prompt === prompt || word.answer.toLowerCase() === answer.toLowerCase())) {
                 alert('该单词已存在');
                 return;
             }
             
-            wordLists[gameState.settings.wordList].push({ prompt, answer });
+            // 添加新单词
+            wordLists.custom.push({ prompt, answer });
+            
             updateWordListDisplay();
             
             // 清空输入框
@@ -2148,7 +1999,7 @@
         }
 
         function deleteWord(index) {
-            wordLists[gameState.settings.wordList].splice(index, 1);
+            wordLists.custom.splice(index, 1);
             updateWordListDisplay();
         }
 
@@ -2173,18 +2024,26 @@
                     if (parts.length >= 2) {
                         const prompt = parts[0].trim();
                         const answer = parts[1].trim();
-                        if (prompt && /^[a-zA-Z]+$/.test(answer)) {
+                        if (prompt && /^[a-zA-Z\s]+$/.test(answer)) {
                             newWords.push({ prompt, answer });
                         }
                     }
                 }
                 if (newWords.length === 0) {
                     alert('没有有效的词条，请检查文本内容格式');
+                    // 清空文件输入框，允许重新选择同一文件
+                    e.target.value = '';
                     return;
                 }
-                wordLists[gameState.settings.wordList] = newWords;
+                
+                // 替换当前词库
+                wordLists.custom = newWords;
+                
                 updateWordListDisplay();
                 alert(`成功导入 ${newWords.length} 个单词！`);
+                
+                // 清空文件输入框，允许重新选择同一文件
+                e.target.value = '';
             };
             reader.readAsText(file, 'utf-8');
         }
