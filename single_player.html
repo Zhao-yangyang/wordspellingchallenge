@@ -884,6 +884,7 @@
 
         // 防止快速点击标志
         let isProcessingInput = false;
+        let processingTimeout = null; // 添加延时操作的引用
 
         // 基础词库数据
         const wordLists = {
@@ -1031,6 +1032,12 @@
             document.getElementById('closeResultBtn').onclick = () => {
                 document.getElementById('resultModal').style.display = 'none';
                 
+                // 取消正在进行的延时操作
+                if (processingTimeout) {
+                    clearTimeout(processingTimeout);
+                    processingTimeout = null;
+                }
+                
                 // 完全重置游戏状态
                 gameState.isPlaying = false;
                 gameState.currentWordIndex = 0;
@@ -1039,6 +1046,9 @@
                 gameState.currentInput = '';
                 gameState.correctWords = [];
                 gameState.currentWordList = [];
+                
+                // 重置处理输入锁定状态
+                isProcessingInput = false;
                 
                 // 确保计时器停止
                 if (gameState.timer) {
@@ -1068,12 +1078,21 @@
 
         // 开始游戏
         function startGame() {
+            // 取消任何正在进行的延时操作
+            if (processingTimeout) {
+                clearTimeout(processingTimeout);
+                processingTimeout = null;
+            }
+            
             gameState.isPlaying = true;
             gameState.currentWordIndex = 0;
             gameState.correctCount = 0;
             gameState.startTime = Date.now();
             gameState.currentInput = '';
             gameState.correctWords = []; // 重置正确单词记录
+            
+            // 重置处理输入锁定状态
+            isProcessingInput = false;
             
             // 获取当前词库
             const currentList = wordLists[gameState.settings.wordList];
@@ -1170,6 +1189,9 @@
                 inputs.forEach(input => {
                     input.style.backgroundColor = '#86EFAC';
                 });
+                
+                // 立即更新正确计数显示
+                document.getElementById('correctCount').textContent = gameState.correctCount;
             } else {
                 // 显示错误反馈
                 inputs.forEach(input => {
@@ -1182,8 +1204,14 @@
                 }
             }
 
-            // 延迟后进入下一个单词
-            setTimeout(() => {
+            // 使用可取消的延时操作
+            processingTimeout = setTimeout(() => {
+                // 检查游戏是否仍在进行中（防止重置后仍执行）
+                if (!gameState.isPlaying) {
+                    isProcessingInput = false;
+                    return;
+                }
+                
                 gameState.currentWordIndex++;
                 if (gameState.currentWordIndex < gameState.currentWordList.length) {
                     showNextWord();
@@ -1194,6 +1222,7 @@
                 
                 // 解除锁定状态
                 isProcessingInput = false;
+                processingTimeout = null;
             }, 1500);
         }
 
@@ -1561,6 +1590,12 @@
 
         // 重置游戏函数
         function resetGame() {
+            // 取消正在进行的延时操作
+            if (processingTimeout) {
+                clearTimeout(processingTimeout);
+                processingTimeout = null;
+            }
+            
             // 停止计时器
             if (gameState.timer) {
                 clearInterval(gameState.timer);
@@ -1575,6 +1610,9 @@
             gameState.currentInput = '';
             gameState.correctWords = [];
             gameState.currentWordList = [];
+            
+            // 重置处理输入锁定状态
+            isProcessingInput = false;
             
             // 重置界面显示
             document.getElementById('prompt').textContent = '准备开始';

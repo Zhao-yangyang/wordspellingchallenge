@@ -1360,11 +1360,23 @@
                 // 重置结果弹窗标题
                 document.querySelector('.result-header').textContent = '🎉 游戏结束';
                 
+                // 取消所有正在进行的延时操作
+                ['player1', 'player2'].forEach(p => {
+                    if (processingTimeout[p]) {
+                        clearTimeout(processingTimeout[p]);
+                        processingTimeout[p] = null;
+                    }
+                });
+                
                 // 重置游戏状态
                 gameState.isPlaying = false;
                 gameState.players.player1.isFinished = false;
                 gameState.players.player2.isFinished = false;
                 gameState.currentWordList = [];
+                
+                // 重置处理输入锁定状态
+                isProcessingInput.player1 = false;
+                isProcessingInput.player2 = false;
                 
                 // 停止并清除所有计时器
                 ['player1', 'player2'].forEach(p => {
@@ -1414,6 +1426,14 @@
 
         // 开始游戏
         function startGame(player) {
+            // 取消所有正在进行的延时操作
+            ['player1', 'player2'].forEach(p => {
+                if (processingTimeout[p]) {
+                    clearTimeout(processingTimeout[p]);
+                    processingTimeout[p] = null;
+                }
+            });
+            
             // 重置玩家状态
             ['player1', 'player2'].forEach(p => {
                 gameState.players[p].currentWordIndex = 0;
@@ -1432,6 +1452,10 @@
                 document.getElementById(`${p}TotalWords`).textContent = '0';
                 document.getElementById(`${p}Timer`).textContent = '00:00';
             });
+            
+            // 重置处理输入锁定状态
+            isProcessingInput.player1 = false;
+            isProcessingInput.player2 = false;
             
             // 设置游戏状态为进行中
             gameState.isPlaying = true;
@@ -1554,6 +1578,12 @@
             player1: false,
             player2: false
         };
+        
+        // 添加延时操作的引用
+        let processingTimeout = {
+            player1: null,
+            player2: null
+        };
 
         // 处理回车键
         function handleEnter(player) {
@@ -1584,6 +1614,9 @@
                 inputs.forEach(input => {
                     input.style.backgroundColor = '#86EFAC';
                 });
+                
+                // 立即更新正确计数显示
+                document.getElementById(`${player}CorrectCount`).textContent = gameState.players[player].correctCount;
             } else {
                 // 显示错误反馈
                 inputs.forEach(input => {
@@ -1596,8 +1629,15 @@
                 }
             }
 
-            // 延迟后进入下一个单词
-            setTimeout(() => {
+            // 使用可取消的延时操作
+            processingTimeout[player] = setTimeout(() => {
+                // 检查游戏是否仍在进行中（防止重置后仍执行）
+                if (!gameState.isPlaying) {
+                    isProcessingInput[player] = false;
+                    processingTimeout[player] = null;
+                    return;
+                }
+                
                 gameState.players[player].currentWordIndex++;
                 
                 // 检查玩家是否完成所有单词
@@ -1615,6 +1655,7 @@
                 
                 // 解除锁定状态
                 isProcessingInput[player] = false;
+                processingTimeout[player] = null;
             }, 1500);
         }
 
@@ -1901,6 +1942,14 @@
 
         // 全局重置游戏函数
         function resetGame() {
+            // 取消所有正在进行的延时操作
+            ['player1', 'player2'].forEach(p => {
+                if (processingTimeout[p]) {
+                    clearTimeout(processingTimeout[p]);
+                    processingTimeout[p] = null;
+                }
+            });
+            
             // 停止所有计时器
             ['player1', 'player2'].forEach(p => {
                 if (gameState.players[p].timer) {
@@ -1911,6 +1960,10 @@
             
             // 重置游戏状态
             gameState.isPlaying = false;
+            
+            // 重置处理输入锁定状态
+            isProcessingInput.player1 = false;
+            isProcessingInput.player2 = false;
             
             // 显示开始游戏按钮，隐藏重置按钮
             document.getElementById('globalStartGameBtn').style.display = 'inline-flex';
