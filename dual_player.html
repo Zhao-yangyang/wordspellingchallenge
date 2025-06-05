@@ -249,7 +249,17 @@
             touch-action: manipulation; /* 优化触摸体验 */
         }
 
+        /* 空格键在小屏幕上的特殊样式 */
+        .keyboard-key[style*="min-width: 6rem"] {
+            min-width: 40% !important;
+            width: 40% !important;
+        }
 
+        .keyboard-key:active, .keyboard-key:focus {
+            outline: 2px solid #3B82F6;
+            outline-offset: 2px;
+            filter: brightness(0.95);
+        }
 
         /* 彩色字母按钮 */
         .key-red { background: #FCA5A5; color: #B91C1C; }
@@ -260,12 +270,6 @@
         .key-purple { background: #C7D2FE; color: #3730A3; }
         .key-orange { background: #FDBA74; color: #B45309; }
         .key-cyan { background: #6EE7B7; color: #065F46; }
-
-        .keyboard-key:active, .keyboard-key:focus {
-            outline: 2px solid #3B82F6;
-            outline-offset: 2px;
-            filter: brightness(0.95);
-        }
 
         /* 操作按钮区 */
         .action-bar {
@@ -464,6 +468,40 @@
 
         .btn:active {
             transform: translateY(0);
+        }
+
+                /* 自定义文件选择框样式 */
+        .file-upload-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .file-upload-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            min-width: auto;
+        }
+
+        .file-name {
+            color: #6B7280;
+            font-size: 0.9rem;
+            font-style: italic;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-name.selected {
+            color: #059669;
+            font-weight: 500;
+            font-style: normal;
         }
 
         /* 结果弹窗样式 */
@@ -772,6 +810,11 @@
                 font-size: 1rem;
                 border-radius: 0.4rem;
             }
+            /* 空格键在小屏幕上的特殊样式 */
+            .keyboard-key[style*="min-width: 6rem"] {
+                min-width: 40% !important;
+                width: 40% !important;
+            }
             .action-bar {
                 flex-wrap: wrap;
                 justify-content: center;
@@ -840,6 +883,11 @@
                 font-size: 0.9rem;
                 border-radius: 0.4rem;
                 padding: 0;
+            }
+            /* 空格键在超小屏幕上的特殊样式 */
+            .keyboard-key[style*="min-width: 6rem"] {
+                min-width: 35% !important;
+                width: 35% !important;
             }
             .action-btn, .game-btn {
                 font-size: 0.85rem;
@@ -1104,8 +1152,15 @@
                     <small>0表示无时间限制</small>
                 </div>
                 <div class="form-group">
-                    <label for="importTXT">上传文本文件导入:</label>
-                    <input type="file" id="importTXT" accept=".txt,text/plain">
+                    <label>上传文本文件导入:</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="importTXT" accept=".txt,text/plain" style="display: none;">
+                        <button type="button" class="btn btn-secondary file-upload-btn" id="fileUploadBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10,9 9,9 8,9"></polyline></svg>
+                            选择文件
+                        </button>
+                        <span class="file-name" id="fileName">文件仅支持TXT格式</span>
+                    </div>
                     <small>每行"中文,英文"，如：苹果,apple。可含表头。</small>
                 </div>
                 <div class="form-group">
@@ -1170,6 +1225,9 @@
             custom: []
         };
 
+        // 临时词库，用于在保存前暂存修改
+        let tempWordList = [];
+
         // 初始化游戏
         function initGame() {
             // 不再从本地存储加载设置，使用默认设置
@@ -1208,6 +1266,9 @@
                         {key:'z', color:'key-green'},{key:'x', color:'key-blue'},{key:'c', color:'key-yellow'},
                         {key:'v', color:'key-orange'},{key:'b', color:'key-blue'},{key:'n', color:'key-pink'},
                         {key:'m', color:'key-green'}
+                    ],
+                    [
+                        {key:' ', text:'空格', color:'key-cyan', isSpace: true}
                     ]
                 ];
 
@@ -1218,7 +1279,11 @@
                     row.forEach((item) => {
                         const keyElement = document.createElement('button');
                         keyElement.className = 'keyboard-key ' + (item.color||'');
-                        keyElement.textContent = item.key;
+                        keyElement.textContent = item.text || item.key;
+                        if (item.isSpace) {
+                            keyElement.style.minWidth = '6rem';
+                            keyElement.style.width = '6rem';
+                        }
                         keyElement.onclick = () => handleKeyPress(player, item.key);
                         rowDiv.appendChild(keyElement);
                     });
@@ -1239,6 +1304,9 @@
             document.getElementById('closeWordList').onclick = () => hideWordList();
             document.getElementById('addWordBtn').onclick = addWord;
             document.getElementById('importTXT').onchange = importTXT;
+            document.getElementById('fileUploadBtn').onclick = () => {
+                document.getElementById('importTXT').click();
+            };
             document.getElementById('restartBtn').onclick = restartGame;
             document.getElementById('globalStartGameBtn').onclick = () => startGame();
             document.getElementById('globalResetBtn').onclick = () => resetGame();
@@ -1650,6 +1718,9 @@
 
             if (/^[a-zA-Z]$/.test(event.key)) {
                 handleKeyPress(player, event.key.toLowerCase());
+            } else if (event.key === ' ') {
+                event.preventDefault(); // 防止页面滚动
+                handleKeyPress(player, ' ');
             }
         }
 
@@ -1708,6 +1779,9 @@
             
             // 应用设置
             gameState.settings.timeLimit = newTimeLimit;
+            
+            // 将临时词库保存到正式词库
+            wordLists.custom = [...tempWordList];
             
             // 显示保存成功消息
             alert('设置已保存！游戏将使用新设置。');
@@ -1907,6 +1981,9 @@
                 return;
             }
             
+            // 初始化临时词库为当前词库的副本
+            tempWordList = [...wordLists.custom];
+            
             if (player) {
                 // 单个玩家的设置
                 document.getElementById('wordListModal').style.display = 'flex';
@@ -1920,6 +1997,20 @@
         }
 
         function hideWordList() {
+            // 检查是否有未保存的更改
+            const hasChanges = JSON.stringify(tempWordList) !== JSON.stringify(wordLists.custom);
+            
+            if (hasChanges) {
+                const confirmClose = confirm('您有未保存的更改，确定要关闭吗？未保存的更改将丢失。');
+                if (!confirmClose) {
+                    return; // 用户选择不关闭
+                }
+            }
+            
+            // 重置文件名显示
+            document.getElementById('fileName').textContent = '文件仅支持TXT格式';
+            document.getElementById('fileName').classList.remove('selected');
+            
             document.getElementById('wordListModal').style.display = 'none';
         }
 
@@ -1927,7 +2018,8 @@
             const container = document.getElementById('currentWordList');
             container.innerHTML = '';
             
-            const currentList = wordLists.custom;
+            // 使用临时词库而不是正式词库
+            const currentList = tempWordList;
             if (!currentList || currentList.length === 0) {
                 container.innerHTML = '<div style="text-align: center; color: #6B7280; padding: 1rem;">当前词库为空</div>';
                 return;
@@ -1981,15 +2073,14 @@
                 return;
             }
             
-            // 检查是否已存在
-            const currentList = wordLists.custom;
-            if (currentList.some(word => word.prompt === prompt || word.answer.toLowerCase() === answer.toLowerCase())) {
+            // 检查是否已存在（在临时词库中检查）
+            if (tempWordList.some(word => word.prompt === prompt || word.answer.toLowerCase() === answer.toLowerCase())) {
                 alert('该单词已存在');
                 return;
             }
             
-            // 添加新单词
-            wordLists.custom.push({ prompt, answer });
+            // 添加新单词到临时词库
+            tempWordList.push({ prompt, answer });
             
             updateWordListDisplay();
             
@@ -1999,14 +2090,24 @@
         }
 
         function deleteWord(index) {
-            wordLists.custom.splice(index, 1);
+            tempWordList.splice(index, 1);
             updateWordListDisplay();
         }
 
         // 文本文件导入功能
         function importTXT(e) {
             const file = e.target.files[0];
-            if (!file) return;
+            if (!file) {
+                // 如果没有选择文件，重置文件名显示
+                document.getElementById('fileName').textContent = '文件仅支持TXT格式';
+                document.getElementById('fileName').classList.remove('selected');
+                return;
+            }
+            
+            // 更新文件名显示
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileName').classList.add('selected');
+            
             const reader = new FileReader();
             reader.onload = function(evt) {
                 const text = evt.target.result.trim();
@@ -2033,14 +2134,16 @@
                     alert('没有有效的词条，请检查文本内容格式');
                     // 清空文件输入框，允许重新选择同一文件
                     e.target.value = '';
+                    document.getElementById('fileName').textContent = '文件仅支持TXT格式';
+                    document.getElementById('fileName').classList.remove('selected');
                     return;
                 }
                 
-                // 替换当前词库
-                wordLists.custom = newWords;
+                // 替换临时词库（而不是正式词库）
+                tempWordList = newWords;
                 
                 updateWordListDisplay();
-                alert(`成功导入 ${newWords.length} 个单词！`);
+                alert(`成功导入 ${newWords.length} 个单词！点击"保存设置"以应用更改。`);
                 
                 // 清空文件输入框，允许重新选择同一文件
                 e.target.value = '';
